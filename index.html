@@ -2,397 +2,448 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Kasva Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Kasva Admin Panel</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--p:#6C63FF;--s:#059669;--w:#D97706;--e:#DC2626;--bg:#F4F6FB;--t:#1A1D23;--m:#6B7280;--b:#E5E7EB;--g:#F59E0B}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
-#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#6C63FF,#8B5CF6);padding:24px}
-.box{background:#fff;border-radius:20px;padding:32px 28px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(108,99,255,.3)}
-.logo{text-align:center;margin-bottom:24px}
-.logo-icon{width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,#6C63FF,#8B5CF6);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
-.logo h1{font-size:22px;color:var(--p);font-weight:700}.logo p{font-size:13px;color:var(--m);margin-top:2px}
-.fg{margin-bottom:14px}.fg label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
-.fg input{width:100%;padding:12px 14px;border:1.5px solid var(--b);border-radius:10px;font-size:14px;outline:none}
-.fg input:focus{border-color:var(--p)}
-.btn{width:100%;padding:13px;background:var(--p);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-g{background:var(--s)}
-.btn-o{width:100%;padding:11px;background:#fff;color:var(--p);border:1.5px solid var(--p);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px}
-.err{color:var(--e);font-size:12px;margin-top:8px;text-align:center;min-height:18px}
-.div{border-top:1px solid var(--b);margin:16px 0}
-#appScreen{display:none}
-.topbar{background:linear-gradient(135deg,#6C63FF,#8B5CF6);padding:14px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(108,99,255,.3)}
-.tbi{display:flex;align-items:center;justify-content:space-between;max-width:700px;margin:0 auto}
-.tbi h1{color:#fff;font-size:18px;font-weight:700}
-.tbr{display:flex;align-items:center;gap:10px}
-.badge{background:rgba(255,255,255,.2);color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.btn-lo{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);padding:6px 12px;border-radius:8px;font-size:13px;cursor:pointer}
-.main{padding:16px;max-width:700px;margin:0 auto}
-.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-.sc{background:#fff;border-radius:14px;padding:14px 10px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.sc .n{font-size:24px;font-weight:700}.sc .l{font-size:11px;color:var(--m);margin-top:2px}
-.sc.bl .n{color:var(--p)}.sc.gr .n{color:var(--s)}.sc.go .n{color:var(--g)}
-.tb{background:#fff;border-radius:14px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.tb input{flex:1;min-width:140px;padding:9px 12px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;outline:none}
-.tb input:focus{border-color:var(--p)}
-.tb select{padding:9px 10px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;outline:none;background:#fff;cursor:pointer}
-.rfr{padding:9px 14px;background:var(--p);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
-.stitle{font-size:13px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.uc{background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;transition:transform .15s}
-.uc:active{transform:scale(.98)}
-.uch{display:flex;align-items:center;gap:10px}
-.av{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#6C63FF,#8B5CF6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700;flex-shrink:0}
-.ui{flex:1;min-width:0}
-.un{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ue{font-size:12px;color:var(--m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pb{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0;white-space:nowrap}
-.pf{background:#F3F4F6;color:#6B7280}.pp{background:#EDE9FE;color:#6C63FF}.pt{background:#D1FAE5;color:#059669}.pe{background:#FEE2E2;color:#DC2626}
-.um{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.ch{font-size:11px;color:var(--m);background:var(--bg);padding:3px 8px;border-radius:6px}
-.ch.w{background:#FEF3C7;color:var(--w)}.ch.ok{background:#D1FAE5;color:var(--s)}
-.empty{text-align:center;padding:48px 16px;color:var(--m)}
-.loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--m)}
-.sp{width:24px;height:24px;border:3px solid var(--b);border-top-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}
-.mo.open{display:flex}
-.md{background:#fff;border-radius:24px 24px 0 0;padding:20px 20px 40px;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;animation:su .25s ease}
-@keyframes su{from{transform:translateY(100%)}}
-.mh{width:40px;height:4px;background:var(--b);border-radius:2px;margin:0 auto 16px}
-.mt{font-size:17px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
-.mc{width:30px;height:30px;border-radius:8px;background:var(--bg);border:none;cursor:pointer;font-size:16px}
-.dr{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--b);font-size:14px}
-.dr:last-child{border-bottom:none}
-.dl{color:var(--m);font-size:13px}.dv{font-weight:500;text-align:right;max-width:60%;word-break:break-all}
-.es{margin-top:20px}.es h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--p)}
-.er{margin-bottom:12px}.er label{display:block;font-size:12px;font-weight:600;color:var(--m);margin-bottom:5px}
-.er select,.er input[type=date]{width:100%;padding:10px 12px;border:1.5px solid var(--b);border-radius:10px;font-size:14px;outline:none;background:#fff}
-.bs{width:100%;padding:13px;background:var(--p);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:16px}
-.bs:disabled{opacity:.5;cursor:not-allowed}.bs.ok{background:var(--s)}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1D23;color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none}
-.toast.show{opacity:1}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary:#6C63FF; --success:#059669; --warning:#D97706;
+  --error:#DC2626; --bg:#F4F6FB; --card:#FFF;
+  --text:#1A1D23; --muted:#6B7280; --border:#E5E7EB; --gold:#F59E0B;
+}
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* Login Section */
+#loginScreen { display:flex; align-items:center; justify-content:center; min-height:100vh; background:linear-gradient(135deg,#6C63FF 0%,#8B5CF6 100%); padding:24px; }
+.login-box { background:white; border-radius:20px; padding:32px 28px; width:100%; max-width:380px; box-shadow:0 20px 60px rgba(108,99,255,.3); }
+.login-logo { text-align:center; margin-bottom:24px; }
+.logo-icon { width:72px; height:72px; border-radius:18px; background:linear-gradient(135deg,#6C63FF,#8B5CF6); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; }
+.login-logo h1 { font-size:22px; color:var(--primary); font-weight:700; }
+.login-logo p { font-size:13px; color:var(--muted); margin-top:2px; }
+.form-group { margin-bottom:14px; }
+.form-group label { display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
+.form-group input { width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:14px; outline:none; transition:border-color .2s; }
+.form-group input:focus { border-color:var(--primary); }
+.btn-primary { width:100%; padding:13px; background:var(--primary); color:white; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; transition:opacity .2s; }
+.btn-primary:hover { opacity:.88; }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+.btn-outline { width:100%; padding:11px; background:white; color:var(--primary); border:1.5px solid var(--primary); border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; margin-top:8px; }
+.error-msg { color:var(--error); font-size:12px; margin-top:8px; text-align:center; min-height:18px; }
+.divider { border-top:1px solid var(--border); margin:16px 0; }
+
+/* App Dashboard */
+#appScreen { display:none; }
+.top-bar { background:linear-gradient(135deg,#6C63FF 0%,#8B5CF6 100%); padding:14px 16px; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(108,99,255,.3); }
+.top-bar-inner { display:flex; align-items:center; justify-content:space-between; max-width:700px; margin:0 auto; }
+.top-bar h1 { color:white; font-size:18px; font-weight:700; }
+.top-bar-right { display:flex; align-items:center; gap:10px; }
+.admin-badge { background:rgba(255,255,255,.2); color:white; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.btn-logout { background:rgba(255,255,255,.15); color:white; border:1px solid rgba(255,255,255,.3); padding:6px 12px; border-radius:8px; font-size:13px; cursor:pointer; }
+.main { padding:16px; max-width:700px; margin:0 auto; }
+
+/* Tabs Navigation */
+.tabs { display:flex; gap:4px; background:white; border-radius:14px; padding:6px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.tab { flex:1; padding:10px; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; background:transparent; color:var(--muted); transition:all .2s; }
+.tab.active { background:var(--primary); color:white; }
+.tab-badge { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding: 0 4px; border-radius:10px; font-size:10px; font-weight:700; margin-left:6px; background:var(--error); color:white; }
+
+/* Stats & Toolbar */
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+.stat-card { background:white; border-radius:14px; padding:14px 10px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.stat-card .num { font-size:24px; font-weight:700; }
+.stat-card .lbl { font-size:11px; color:var(--muted); margin-top:2px; }
+.stat-card.blue .num { color:var(--primary); }
+.stat-card.green .num { color:var(--success); }
+.stat-card.gold .num { color:var(--gold); }
+
+.toolbar { background:white; border-radius:14px; padding:12px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,.06); display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.toolbar input, .toolbar select { flex:1; min-width:120px; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:13px; outline:none; }
+.btn-refresh { padding:9px 14px; background:var(--primary); color:white; border:none; border-radius:8px; font-size:13px; cursor:pointer; font-weight:600; }
+
+/* User & Invoice Cards */
+.user-card, .inv-card { background:white; border-radius:16px; padding:16px; margin-bottom:10px; box-shadow:0 2px 8px rgba(0,0,0,.06); transition:transform .1s; }
+.user-card:active { transform:scale(.98); cursor:pointer; }
+.user-avatar { width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,#6C63FF,#8B5CF6); display:flex; align-items:center; justify-content:center; color:white; font-size:18px; font-weight:700; }
+.plan-badge { padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+.plan-free { background:#F3F4F6; color:#6B7280; }
+.plan-pro { background:#EDE9FE; color:#6C63FF; }
+.plan-trial { background:#D1FAE5; color:#059669; }
+
+.inv-card { border-left:4px solid var(--border); }
+.inv-card.pending { border-left-color:var(--warning); }
+.inv-card.verified { border-left-color:var(--success); }
+.inv-badge { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+.inv-badge.pending { background:#FEF3C7; color:#D97706; }
+.inv-badge.verified { background:#D1FAE5; color:#059669; }
+.btn-verify { width:100%; margin-top:12px; padding:10px; background:var(--success); color:white; border:none; border-radius:8px; font-weight:700; cursor:pointer; }
+
+/* Components */
+.loading { text-align:center; padding:40px; color:var(--muted); }
+.spinner { width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin .7s linear infinite; margin:0 auto 10px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:flex-end; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:white; border-radius:24px 24px 0 0; padding:20px; width:100%; max-width:500px; max-height:90vh; overflow-y:auto; }
+.detail-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:14px; }
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#1A1D23; color:white; padding:12px 20px; border-radius:12px; z-index:999; display:none; }
 </style>
 </head>
 <body>
 
 <div id="loginScreen">
-  <div class="box">
-    <div class="logo">
-      <div class="logo-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      <h1>Kasva Admin</h1><p>Panel Manajemen Pengguna</p>
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-icon">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <h1>Kasva Admin</h1>
+      <p>Panel Manajemen Pengguna</p>
     </div>
     <div id="loginForm">
-      <div class="fg"><label>Email</label><input type="email" id="loginEmail" placeholder="admin@email.com"></div>
-      <div class="fg"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••"></div>
-      <button class="btn" id="loginBtn">Masuk</button>
-      <div class="err" id="loginError"></div>
-      <div class="div"></div>
-      <p style="font-size:12px;color:var(--m);text-align:center;margin-bottom:8px">Belum punya akun admin?</p>
-      <button class="btn-o" id="showRegBtn">Buat Akun Admin</button>
+      <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="admin@email.com" /></div>
+      <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••" /></div>
+      <button class="btn-primary" id="loginBtn" onclick="doLogin()">Masuk</button>
+      <div class="error-msg" id="loginError"></div>
+      <div class="divider"></div>
+      <button class="btn-outline" onclick="toggleRegister()">Buat Akun Admin</button>
     </div>
     <div id="registerForm" style="display:none">
-      <p style="font-size:15px;font-weight:700;margin-bottom:16px">Buat Akun Admin Baru</p>
-      <div class="fg"><label>Email</label><input type="email" id="regEmail" placeholder="admin@kasvapos.com"></div>
-      <div class="fg"><label>Password (min. 6 karakter)</label><input type="password" id="regPass" placeholder="••••••••"></div>
-      <div class="fg"><label>Konfirmasi Password</label><input type="password" id="regPassConf" placeholder="••••••••"></div>
-      <button class="btn btn-g" id="regBtn">Buat Akun</button>
-      <div class="err" id="regError"></div>
-      <div class="div"></div>
-      <button class="btn-o" id="backLoginBtn">← Kembali Login</button>
+      <div class="form-group"><label>Email Admin</label><input type="email" id="regEmail" /></div>
+      <div class="form-group"><label>Password</label><input type="password" id="regPass" /></div>
+      <button class="btn-primary" onclick="doRegister()" style="background:var(--success)">Buat Akun</button>
+      <button class="btn-outline" onclick="toggleRegister()">Kembali</button>
     </div>
   </div>
 </div>
 
 <div id="appScreen">
-  <div class="topbar">
-    <div class="tbi">
+  <div class="top-bar">
+    <div class="top-bar-inner">
       <h1>⚡ Kasva Admin</h1>
-      <div class="tbr">
-        <span class="badge" id="adminEmail">Admin</span>
-        <button class="btn-lo" id="logoutBtn">Keluar</button>
+      <div class="top-bar-right">
+        <span class="admin-badge" id="adminEmail">Admin</span>
+        <button class="btn-logout" onclick="doLogout()">Keluar</button>
       </div>
     </div>
   </div>
+
   <div class="main">
-    <div class="sg">
-      <div class="sc bl"><div class="n" id="stTotal">-</div><div class="l">Total User</div></div>
-      <div class="sc gr"><div class="n" id="stPro">-</div><div class="l">Pro Aktif</div></div>
-      <div class="sc go"><div class="n" id="stTrial">-</div><div class="l">Trial</div></div>
+    <div class="tabs">
+      <button class="tab active" id="tabUsers" onclick="switchTab('users')">Pengguna</button>
+      <button class="tab" id="tabInvoices" onclick="switchTab('invoices')">
+        Invoices <span class="tab-badge" id="pendingBadge" style="display:none">0</span>
+      </button>
     </div>
-    <div class="tb">
-      <input type="text" id="searchInput" placeholder="🔍 Cari nama / email...">
-      <select id="filterPlan">
-        <option value="">Semua Plan</option>
-        <option value="free">Free</option>
-        <option value="trial">Trial</option>
-        <option value="pro">Pro</option>
-        <option value="expired">Expired</option>
-      </select>
-      <button class="rfr" id="refreshBtn">↻ Refresh</button>
+
+    <div id="sectionUsers">
+      <div class="stats-grid">
+        <div class="stat-card blue"><div class="num" id="statTotal">0</div><div class="lbl">Total User</div></div>
+        <div class="stat-card green"><div class="num" id="statPro">0</div><div class="lbl">Pro Aktif</div></div>
+        <div class="stat-card gold"><div class="num" id="statTrial">0</div><div class="lbl">Trial</div></div>
+      </div>
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="Cari nama/email..." oninput="renderUsers()" />
+        <select id="filterPlan" onchange="renderUsers()">
+          <option value="">Semua Plan</option>
+          <option value="free">Free</option>
+          <option value="trial">Trial</option>
+          <option value="pro">Pro</option>
+        </select>
+        <button class="btn-refresh" onclick="loadUsers()">↻</button>
+      </div>
+      <div id="userList"></div>
     </div>
-    <div class="stitle" id="userCount">Memuat...</div>
-    <div id="userList"><div class="loading"><div class="sp"></div> Memuat data...</div></div>
+
+    <div id="sectionInvoices" style="display:none">
+      <div class="toolbar">
+        <select id="filterInvoice" onchange="renderInvoices()" style="flex:2">
+          <option value="">Semua Status</option>
+          <option value="pending">Pending</option>
+          <option value="verified">Verified</option>
+        </select>
+        <button class="btn-refresh" onclick="loadInvoices()">↻ Refresh</button>
+      </div>
+      <div id="invoiceList"></div>
+    </div>
   </div>
 </div>
 
-<div class="mo" id="modalOverlay">
-  <div class="md">
-    <div class="mh"></div>
-    <div class="mt"><span>Detail Pengguna</span><button class="mc" id="closeModalBtn">✕</button></div>
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div style="font-weight:700; margin-bottom:15px; display:flex; justify-content:space-between">
+      <span>Detail User</span>
+      <button onclick="closeModal()" style="border:none; background:none; cursor:pointer">✕</button>
+    </div>
     <div id="modalBody"></div>
-    <div class="es">
-      <h3>✏️ Ubah Status</h3>
-      <div class="er"><label>Plan</label>
-        <select id="editPlan"><option value="free">Free</option><option value="pro">Pro</option></select>
+    <div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px">
+      <h4 style="font-size:13px; margin-bottom:10px">Ubah Status Manual</h4>
+      <div class="form-group">
+        <label>Set Plan</label>
+        <select id="editPlan" style="width:100%; padding:8px; border-radius:8px; border:1.5px solid var(--border)">
+          <option value="free">Free</option>
+          <option value="pro">Pro</option>
+        </select>
       </div>
-      <div class="er"><label>Tanggal Expired Pro</label><input type="date" id="editExpiry"></div>
-      <div class="er"><label>Trial Sampai</label><input type="date" id="editTrial"></div>
-      <button class="bs" id="saveBtn">💾 Simpan Perubahan</button>
+      <div class="form-group">
+        <label>Expired Pro</label>
+        <input type="date" id="editExpiry" style="width:100%; padding:8px; border-radius:8px; border:1.5px solid var(--border)" />
+      </div>
+      <button class="btn-primary" id="saveBtn" onclick="saveUser()">Simpan Perubahan</button>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK tepat sebelum script utama -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <script>
+// --- CONFIG & INIT ---
+const firebaseConfig = {
+  apiKey: "AIzaSyDVCEAaOUJ2_a8uxQw2QvOtpBjVwI6IRR0",
+  authDomain: "kasva-d19fa.firebaseapp.com",
+  projectId: "kasva-d19fa",
+  storageBucket: "kasva-d19fa.firebasestorage.app",
+  messagingSenderId: "110994025196",
+  appId: "1:110994025196:android:6f38ac65f6852c763493c9"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-firebase.initializeApp({
-  apiKey:"AIzaSyDVCEAaOUJ2_a8uxQw2QvOtpBjVwI6IRR0",
-  authDomain:"kasva-d19fa.firebaseapp.com",
-  projectId:"kasva-d19fa",
-  storageBucket:"kasva-d19fa.firebasestorage.app",
-  messagingSenderId:"110994025196",
-  appId:"1:110994025196:android:6f38ac65f6852c763493c9"
-});
+let allUsers = [];
+let allInvoices = [];
+let currentUserId = null;
 
-var auth      = firebase.auth();
-var db        = firebase.firestore();
-var allUsers  = [];
-var activeUid = null;
-
-// ── Auth state
-auth.onAuthStateChanged(function(user) {
+// --- AUTH LOGIC ---
+auth.onAuthStateChanged(user => {
   if (user) {
     document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appScreen').style.display   = 'block';
-    document.getElementById('adminEmail').textContent    = user.email;
+    document.getElementById('appScreen').style.display = 'block';
+    document.getElementById('adminEmail').textContent = user.email;
     loadUsers();
+    loadInvoices();
   } else {
     document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('appScreen').style.display   = 'none';
-    allUsers = [];
+    document.getElementById('appScreen').style.display = 'none';
   }
 });
 
-// ── Functions
-function toggleForm(showReg) {
-  document.getElementById('loginForm').style.display    = showReg ? 'none' : 'block';
-  document.getElementById('registerForm').style.display = showReg ? 'block' : 'none';
-  document.getElementById('loginError').textContent = '';
-  document.getElementById('regError').textContent   = '';
+function doLogin() {
+  const e = document.getElementById('loginEmail').value;
+  const p = document.getElementById('loginPass').value;
+  auth.signInWithEmailAndPassword(e, p).catch(err => alert("Login Gagal: " + err.message));
 }
 
-function doLogin() {
-  var email = document.getElementById('loginEmail').value.trim();
-  var pass  = document.getElementById('loginPass').value;
-  var err   = document.getElementById('loginError');
-  var btn   = document.getElementById('loginBtn');
-  err.textContent = '';
-  if (!email||!pass){ err.textContent='Email dan password wajib diisi'; return; }
-  btn.textContent='Memuat...'; btn.disabled=true;
-  auth.signInWithEmailAndPassword(email, pass).catch(function(){
-    err.textContent='Email atau password salah';
-    btn.textContent='Masuk'; btn.disabled=false;
-  });
+function doLogout() { auth.signOut(); }
+
+function toggleRegister() {
+  const lf = document.getElementById('loginForm');
+  const rf = document.getElementById('registerForm');
+  const isLogin = lf.style.display !== 'none';
+  lf.style.display = isLogin ? 'none' : 'block';
+  rf.style.display = isLogin ? 'block' : 'none';
 }
 
 function doRegister() {
-  var email = document.getElementById('regEmail').value.trim();
-  var pass  = document.getElementById('regPass').value;
-  var conf  = document.getElementById('regPassConf').value;
-  var err   = document.getElementById('regError');
-  var btn   = document.getElementById('regBtn');
-  err.textContent='';
-  if (!email||!pass){ err.textContent='Email dan password wajib diisi'; return; }
-  if (pass.length<6){ err.textContent='Password minimal 6 karakter'; return; }
-  if (pass!==conf){ err.textContent='Password tidak cocok'; return; }
-  btn.textContent='Membuat...'; btn.disabled=true;
-  auth.createUserWithEmailAndPassword(email, pass).then(function(){
-    showToast('✓ Akun admin berhasil dibuat!');
-  }).catch(function(e){
-    var m={'auth/email-already-in-use':'Email sudah terdaftar','auth/invalid-email':'Format email salah','auth/weak-password':'Password terlalu lemah'};
-    err.textContent = m[e.code]||('Gagal: '+e.message);
-    btn.textContent='Buat Akun'; btn.disabled=false;
-  });
+  const e = document.getElementById('regEmail').value;
+  const p = document.getElementById('regPass').value;
+  auth.createUserWithEmailAndPassword(e, p).then(() => alert("Berhasil dibuat!")).catch(err => alert(err.message));
 }
 
+// --- DATA LOADING ---
 function loadUsers() {
-  document.getElementById('userList').innerHTML='<div class="loading"><div class="sp"></div> Memuat...</div>';
-  db.collection('users').get().then(function(snap){
-    allUsers=snap.docs.map(function(d){ var o=d.data(); o.id=d.id; return o; });
-    updateStats(); renderUsers();
-  }).catch(function(e){
-    console.error('Firestore error:', e.code, e.message);
-    document.getElementById('userList').innerHTML=
-      '<div class="empty">❌ Gagal memuat data<br><br>'+
-      '<b>Error:</b> '+e.message+'<br><br>'+
-      '<small>Cek F12 Console untuk detail</small></div>';
+  const listEl = document.getElementById('userList');
+  listEl.innerHTML = '<div class="loading"><div class="spinner"></div> Memuat data user...</div>';
+  
+  db.collection('users').get().then(snap => {
+    allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Sort manual karena createdAt di DB berupa String
+    allUsers.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+    updateStats();
+    renderUsers();
+  }).catch(e => {
+    listEl.innerHTML = `<div class="loading">Gagal: ${e.message}</div>`;
   });
 }
 
-function toD(v){ return v?(v.toDate?v.toDate():new Date(v)):null; }
+function loadInvoices() {
+  const invEl = document.getElementById('invoiceList');
+  invEl.innerHTML = '<div class="loading"><div class="spinner"></div> Memuat invoice...</div>';
+  
+  db.collection('invoices').get().then(snap => {
+    allInvoices = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allInvoices.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+    updatePendingBadge();
+    renderInvoices();
+  });
+}
 
-function getStatus(u){
-  var now=new Date(), trial=toD(u.trialUntil), exp=toD(u.planExpiry);
-  if(trial&&trial>now) return 'trial';
-  if(u.plan==='pro'&&exp&&exp>now) return 'pro';
-  if(u.plan==='pro'&&(!exp||exp<=now)) return 'expired';
+// --- RENDERING ---
+function getPlanStatus(u) {
+  const now = new Date();
+  const trial = u.trialUntil ? new Date(u.trialUntil) : null;
+  const expiry = u.planExpiry ? new Date(u.planExpiry) : null;
+  if (trial && trial > now) return 'trial';
+  if (u.plan === 'pro' && expiry && expiry > now) return 'pro';
   return 'free';
 }
 
-function badge(s){
-  var m={free:['pf','FREE'],pro:['pp','PRO'],trial:['pt','TRIAL'],expired:['pe','EXPIRED']};
-  var x=m[s]||m.free;
-  return '<span class="pb '+x[0]+'">'+x[1]+'</span>';
-}
-
-function fmt(v){
-  if(!v) return '-';
-  try{ var d=toD(v); return(!d||isNaN(d))?'-':d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
-  catch(e){ return '-'; }
-}
-
-function fmtI(v){
-  if(!v) return '';
-  try{ var d=toD(v); return(!d||isNaN(d))?'':d.toISOString().split('T')[0]; }
-  catch(e){ return ''; }
-}
-
-function updateStats(){
-  document.getElementById('stTotal').textContent=allUsers.length;
-  document.getElementById('stPro').textContent=allUsers.filter(function(u){return getStatus(u)==='pro';}).length;
-  document.getElementById('stTrial').textContent=allUsers.filter(function(u){return getStatus(u)==='trial';}).length;
-}
-
-function renderUsers(){
-  var q=(document.getElementById('searchInput').value||'').toLowerCase();
-  var f=document.getElementById('filterPlan').value;
-  var now=new Date();
-  var list=allUsers.filter(function(u){
-    return(!q||(u.name||'').toLowerCase().indexOf(q)>=0||(u.email||'').toLowerCase().indexOf(q)>=0)
-        &&(!f||getStatus(u)===f);
+function renderUsers() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const filter = document.getElementById('filterPlan').value;
+  const listEl = document.getElementById('userList');
+  
+  const filtered = allUsers.filter(u => {
+    const matchSearch = (u.name||"").toLowerCase().includes(search) || (u.email||"").toLowerCase().includes(search);
+    const matchFilter = !filter || getPlanStatus(u) === filter;
+    return matchSearch && matchFilter;
   });
-  document.getElementById('userCount').textContent=list.length+' pengguna'+(f?' (filter)':'');
-  if(!list.length){
-    document.getElementById('userList').innerHTML='<div class="empty">Tidak ada pengguna</div>';
+
+  if(filtered.length === 0) {
+    listEl.innerHTML = '<div class="loading">Tidak ada data</div>';
     return;
   }
-  var html=list.map(function(u){
-    var s=getStatus(u), av=(u.name||u.email||'?')[0].toUpperCase(), chip='';
-    if(s==='trial'){ var d=toD(u.trialUntil); chip='<span class="ch w">⏱ '+(d?Math.ceil((d-now)/86400000):0)+'h trial</span>'; }
-    else if(s==='pro'){ var d=toD(u.planExpiry); chip='<span class="ch ok">✓ '+(d?Math.ceil((d-now)/86400000):0)+'h</span>'; }
-    else if(s==='expired') chip='<span class="ch w">⚠ Expired</span>';
-    var st=(u.settings&&u.settings.storeName)||'';
-    return '<div class="uc" data-uid="'+u.id+'">'+
-      '<div class="uch"><div class="av">'+av+'</div>'+
-      '<div class="ui"><div class="un">'+(u.name||'(no name)')+'</div>'+
-      '<div class="ue">'+(u.email||u.id)+'</div></div>'+
-      badge(s)+'</div>'+
-      '<div class="um"><span class="ch">📅 '+fmt(u.createdAt)+'</span>'+
-      (st?'<span class="ch">🏪 '+st+'</span>':'')+chip+
-      '<span class="ch">📦 '+(u.productCount||0)+'</span>'+
-      '<span class="ch">🧾 '+(u.txThisMonth||0)+'</span>'+
-      '</div></div>';
+
+  listEl.innerHTML = filtered.map(u => {
+    const status = getPlanStatus(u);
+    const dateStr = u.createdAt ? new Date(u.createdAt).toLocaleDateString('id-ID') : '-';
+    return `
+      <div class="user-card" onclick="openUser('${u.id}')">
+        <div style="display:flex; align-items:center; gap:12px">
+          <div class="user-avatar">${(u.name||"U")[0].toUpperCase()}</div>
+          <div style="flex:1">
+            <div style="font-weight:700">${u.name || 'No Name'}</div>
+            <div style="font-size:12px; color:var(--muted)">${u.email || u.id}</div>
+          </div>
+          <span class="plan-badge plan-${status}">${status.toUpperCase()}</span>
+        </div>
+        <div style="margin-top:10px; font-size:11px; color:var(--muted)">
+          Daftar: ${dateStr} • Toko: ${(u.settings && u.settings.storeName) || '-'}
+        </div>
+      </div>
+    `;
   }).join('');
-  document.getElementById('userList').innerHTML=html;
-  document.querySelectorAll('.uc').forEach(function(el){
-    el.onclick=function(){ openUser(el.getAttribute('data-uid')); };
-  });
 }
 
-function openUser(uid){
-  activeUid=uid;
-  var u=null;
-  for(var i=0;i<allUsers.length;i++){ if(allUsers[i].id===uid){u=allUsers[i];break;} }
+function renderInvoices() {
+  const filter = document.getElementById('filterInvoice').value;
+  const invEl = document.getElementById('invoiceList');
+  
+  const filtered = allInvoices.filter(i => !filter || i.status === filter);
+
+  invEl.innerHTML = filtered.map(inv => {
+    const user = allUsers.find(u => u.id === inv.uid);
+    const name = user ? user.name : 'Unknown User';
+    const isPending = inv.status === 'pending';
+    
+    return `
+      <div class="inv-card ${inv.status}">
+        <div style="display:flex; justify-content:space-between; align-items:start">
+          <div>
+            <div style="font-size:11px; color:var(--muted)">ID: ${inv.id.slice(-6).toUpperCase()}</div>
+            <div style="font-weight:700; margin:4px 0">${name}</div>
+          </div>
+          <span class="inv-badge ${inv.status}">${inv.status.toUpperCase()}</span>
+        </div>
+        <div style="font-size:18px; font-weight:700; color:var(--primary); margin:8px 0">
+          Rp ${(inv.totalAmount || 0).toLocaleString('id-ID')}
+          <span style="font-size:12px; color:var(--muted); font-weight:400">+ ${inv.uniqueCode || 0}</span>
+        </div>
+        <div style="font-size:11px; color:var(--muted)">
+          Dibuat: ${inv.createdAt ? new Date(inv.createdAt).toLocaleString('id-ID') : '-'}
+        </div>
+        ${isPending ? `<button class="btn-verify" onclick="verifyInvoice('${inv.id}', '${inv.uid}')">VERIFIKASI & AKTIFKAN PRO</button>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+// --- ACTIONS ---
+function switchTab(tab) {
+  document.getElementById('sectionUsers').style.display = tab === 'users' ? 'block' : 'none';
+  document.getElementById('sectionInvoices').style.display = tab === 'invoices' ? 'block' : 'none';
+  document.getElementById('tabUsers').className = 'tab' + (tab === 'users' ? ' active' : '');
+  document.getElementById('tabInvoices').className = 'tab' + (tab === 'invoices' ? ' active' : '');
+}
+
+function openUser(uid) {
+  currentUserId = uid;
+  const u = allUsers.find(x => x.id === uid);
   if(!u) return;
-  var s=getStatus(u), st=u.settings||{};
-  var r=function(l,v){ return '<div class="dr"><span class="dl">'+l+'</span><span class="dv">'+v+'</span></div>'; };
-  document.getElementById('modalBody').innerHTML=
-    r('Nama',u.name||'-')+r('Email',u.email||'-')+r('Nama Toko',st.storeName||'-')+
-    r('Plan',badge(s))+r('Daftar',fmt(u.createdAt))+r('Pro Expired',fmt(u.planExpiry))+
-    r('Trial Sampai',fmt(u.trialUntil))+r('Produk/Tx',(u.productCount||0)+'/'+(u.txThisMonth||0))+
-    r('Trial Dipakai',u.trialUsed?'Ya':'Belum')+
-    '<div class="dr"><span class="dl">UID</span><span class="dv" style="font-size:10px;color:#999">'+u.id+'</span></div>';
-  document.getElementById('editPlan').value=u.plan==='pro'?'pro':'free';
-  document.getElementById('editExpiry').value=fmtI(u.planExpiry);
-  document.getElementById('editTrial').value=fmtI(u.trialUntil);
-  var btn=document.getElementById('saveBtn');
-  btn.textContent='💾 Simpan Perubahan'; btn.className='bs'; btn.disabled=false;
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-row"><span>Nama</span><b>${u.name||'-'}</b></div>
+    <div class="detail-row"><span>Email</span><b>${u.email||'-'}</b></div>
+    <div class="detail-row"><span>Plan Saat Ini</span><b>${u.plan||'free'}</b></div>
+    <div class="detail-row"><span>Expired</span><b>${u.planExpiry ? new Date(u.planExpiry).toLocaleDateString('id-ID') : '-'}</b></div>
+  `;
+  document.getElementById('editPlan').value = u.plan || 'free';
   document.getElementById('modalOverlay').classList.add('open');
 }
 
-function closeModal(){
-  document.getElementById('modalOverlay').classList.remove('open');
-  activeUid=null;
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+function saveUser() {
+  const p = document.getElementById('editPlan').value;
+  const e = document.getElementById('editExpiry').value;
+  const btn = document.getElementById('saveBtn');
+  
+  const updateData = { plan: p };
+  if(e) updateData.planExpiry = new Date(e).toISOString();
+
+  btn.disabled = true;
+  db.collection('users').doc(currentUserId).update(updateData).then(() => {
+    showToast("Berhasil diupdate");
+    closeModal();
+    loadUsers();
+  }).finally(() => btn.disabled = false);
 }
 
-function saveUser(){
-  if(!activeUid) return;
-  var btn=document.getElementById('saveBtn');
-  var plan=document.getElementById('editPlan').value;
-  var exp=document.getElementById('editExpiry').value;
-  var tri=document.getElementById('editTrial').value;
-  btn.textContent='Menyimpan...'; btn.disabled=true;
-  var data={plan:plan,planExpiry:exp?new Date(exp).toISOString():null,trialUntil:tri?new Date(tri).toISOString():null};
-  if(plan==='pro'&&exp) data.trialUsed=true;
-  db.collection('users').doc(activeUid).update(data).then(function(){
-    for(var i=0;i<allUsers.length;i++){
-      if(allUsers[i].id===activeUid){
-        allUsers[i].plan=data.plan; allUsers[i].planExpiry=data.planExpiry;
-        allUsers[i].trialUntil=data.trialUntil;
-        if(data.trialUsed) allUsers[i].trialUsed=true;
-        break;
-      }
-    }
-    btn.textContent='✓ Tersimpan!'; btn.className='bs ok'; btn.disabled=false;
-    updateStats(); renderUsers();
-    showToast('✓ Data berhasil diupdate');
-    setTimeout(function(){ btn.textContent='💾 Simpan Perubahan'; btn.className='bs'; },2500);
-  }).catch(function(e){
-    btn.textContent='Gagal'; btn.disabled=false;
-    showToast('Error: '+e.message);
-  });
+function verifyInvoice(invId, uid) {
+  if(!confirm("Sudah cek mutasi? Aktifkan Pro untuk user ini?")) return;
+  
+  const expiry = new Date();
+  expiry.setMonth(expiry.getMonth() + 1); // Tambah 1 bulan
+
+  // 1. Update Invoice
+  db.collection('invoices').doc(invId).update({ status: 'verified' })
+    .then(() => {
+      // 2. Update User ke Pro
+      return db.collection('users').doc(uid).update({
+        plan: 'pro',
+        planExpiry: expiry.toISOString()
+      });
+    })
+    .then(() => {
+      showToast("Berhasil Verifikasi!");
+      loadInvoices();
+      loadUsers();
+    })
+    .catch(err => alert("Error: " + err.message));
 }
 
-function showToast(msg){
-  var t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); },3500);
+function updateStats() {
+  document.getElementById('statTotal').textContent = allUsers.length;
+  document.getElementById('statPro').textContent = allUsers.filter(u => getPlanStatus(u) === 'pro').length;
+  document.getElementById('statTrial').textContent = allUsers.filter(u => getPlanStatus(u) === 'trial').length;
 }
 
-// ── Button bindings — dipasang SETELAH semua function dideklarasikan
-document.getElementById('loginBtn').onclick      = doLogin;
-document.getElementById('logoutBtn').onclick     = function(){ auth.signOut(); };
-document.getElementById('refreshBtn').onclick    = loadUsers;
-document.getElementById('saveBtn').onclick       = saveUser;
-document.getElementById('closeModalBtn').onclick = closeModal;
-document.getElementById('showRegBtn').onclick    = function(){ toggleForm(true); };
-document.getElementById('backLoginBtn').onclick  = function(){ toggleForm(false); };
-document.getElementById('regBtn').onclick        = doRegister;
-document.getElementById('searchInput').oninput  = renderUsers;
-document.getElementById('filterPlan').onchange  = renderUsers;
-document.getElementById('loginPass').onkeydown  = function(e){ if(e.key==='Enter') doLogin(); };
-document.getElementById('regPassConf').onkeydown = function(e){ if(e.key==='Enter') doRegister(); };
-document.getElementById('modalOverlay').onclick  = function(e){
-  if(e.target===document.getElementById('modalOverlay')) closeModal();
-};
+function updatePendingBadge() {
+  const count = allInvoices.filter(i => i.status === 'pending').length;
+  const b = document.getElementById('pendingBadge');
+  b.textContent = count;
+  b.style.display = count > 0 ? 'inline-flex' : 'none';
+}
 
+function showToast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
 </script>
 </body>
 </html>

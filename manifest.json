@@ -1,0 +1,17 @@
+{
+  "name": "Kasva Admin Panel",
+  "short_name": "KasvaAdmin",
+  "start_url": "kasva_admin.html",
+  "display": "standalone",
+  "background_color": "#6C63FF",
+  "theme_color": "#6C63FF",
+  "description": "Panel Manajemen Admin Kasva POS",
+  "icons": [
+    {
+      "src": "https://thumbs2.imgbox.com/3a/50/xhSowhwG_t.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

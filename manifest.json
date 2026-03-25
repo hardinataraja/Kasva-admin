@@ -1,7 +1,7 @@
 {
   "name": "Kasva Admin Panel",
   "short_name": "KasvaAdmin",
-  "start_url": "kasva_admin.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#6C63FF",
   "theme_color": "#6C63FF",

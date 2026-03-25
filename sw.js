@@ -1,6 +1,6 @@
 const CACHE_NAME = 'kasva-admin-v1';
 const urlsToCache = [
-  'kasva_admin.html',
+  'index.html',
   'manifest.json'
 ];
 

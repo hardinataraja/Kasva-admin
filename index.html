@@ -574,7 +574,7 @@ import {
   signOut, onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import {
-  getFirestore, collection, collectionGroup, getDocs, doc, setDoc, updateDoc, query, orderBy
+  getFirestore, collection, collectionGroup, getDocs, doc, setDoc, updateDoc, query
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── Firebase Config (dari google-services.json Anda) ──
@@ -866,9 +866,19 @@ window.loadUsers = async () => {
   document.getElementById('userList').innerHTML =
     '<div class="loading"><div class="spinner"></div> Memuat data...</div>';
   try {
-    const q   = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+    // PENTING: sengaja TIDAK pakai orderBy('createdAt') di query Firestore.
+    // orderBy() diam-diam mengecualikan dokumen yang tidak punya field
+    // tersebut sama sekali (bukan error, cuma hilang dari hasil) — beberapa
+    // user lama tidak punya field createdAt. Ambil semua dulu, urutkan di
+    // JS supaya tidak ada user yang ke-skip.
+    const q    = query(collection(db, 'users'));
     const snap = await getDocs(q);
     allUsers   = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allUsers.sort((a, b) => {
+      const da = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+      const db_ = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+      return db_ - da; // terbaru dulu; yang tanpa createdAt jatuh ke paling bawah
+    });
 
     // Data plan Pro yang sebenarnya ada di users/{uid}/subscription/data,
     // bukan di field root users/{uid}.plan (itu sisa skema lama).

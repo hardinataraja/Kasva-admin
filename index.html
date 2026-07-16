@@ -273,8 +273,8 @@
 
   /* ── Tabs ── */
   .tab-nav {
-    display: flex; gap: 6px; padding: 10px 16px 0;
-    max-width: var(--container-w, 700px); margin: 0 auto;
+    display: flex; gap: 6px; margin: 12px auto 0;
+    max-width: var(--container-w, 700px);
   }
   .tab-btn {
     flex: 1; padding: 10px; border: none; border-radius: 10px 10px 0 0;
@@ -415,17 +415,17 @@
         <button class="btn-logout" onclick="doLogout()">Keluar</button>
       </div>
     </div>
-  </div>
 
-  <div class="tab-nav">
-    <button class="tab-btn active" id="tabBtnUsers" onclick="switchTab('users')">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Pengguna
-    </button>
-    <button class="tab-btn" id="tabBtnStats" onclick="switchTab('stats')">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Statistik & Revenue
-    </button>
+    <div class="tab-nav">
+      <button class="tab-btn active" id="tabBtnUsers" onclick="switchTab('users')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Pengguna
+      </button>
+      <button class="tab-btn" id="tabBtnStats" onclick="switchTab('stats')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Statistik & Revenue
+      </button>
+    </div>
   </div>
 
   <div class="main" id="tabUsers">

@@ -103,6 +103,7 @@
   .stat-card.blue .num  { color: var(--primary); }
   .stat-card.green .num { color: var(--success); }
   .stat-card.gold .num  { color: var(--gold); }
+  .stat-card.red .num   { color: var(--error); }
 
   /* ── Toolbar ── */
   .toolbar {
@@ -151,7 +152,6 @@
   }
   .plan-free    { background: #F3F4F6; color: #6B7280; }
   .plan-pro     { background: #EDE9FE; color: #6C63FF; }
-  .plan-trial   { background: #D1FAE5; color: #059669; }
   .plan-expired { background: #FEE2E2; color: #DC2626; }
 
   .user-meta {
@@ -251,6 +251,61 @@
     margin-bottom: 8px; margin-top: 4px;
   }
 
+  /* ── Tabs ── */
+  .tab-nav {
+    display: flex; gap: 6px; padding: 10px 16px 0;
+    max-width: 700px; margin: 0 auto;
+  }
+  .tab-btn {
+    flex: 1; padding: 10px; border: none; border-radius: 10px 10px 0 0;
+    background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.75);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+  .tab-btn.active { background: var(--bg); color: var(--primary); }
+
+  /* ── Stat Panel (Revenue/Growth/Conversion cards) ── */
+  .panel {
+    background: white; border-radius: 14px; padding: 16px;
+    margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .panel h3 {
+    font-size: 14px; font-weight: 700; margin-bottom: 4px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .panel .sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .metric-row {
+    display: flex; gap: 10px; margin-bottom: 4px;
+  }
+  .metric-box {
+    flex: 1; background: var(--bg); border-radius: 12px;
+    padding: 14px 12px; text-align: center;
+  }
+  .metric-box .num { font-size: 22px; font-weight: 700; color: var(--primary); }
+  .metric-box .num.green { color: var(--success); }
+  .metric-box .num.gold  { color: var(--gold); }
+  .metric-box .lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* Bar chart (growth) */
+  .bar-chart {
+    display: flex; align-items: flex-end; gap: 8px;
+    height: 110px; margin-top: 12px; padding: 0 2px;
+  }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+  .bar-fill {
+    width: 100%; max-width: 28px; background: linear-gradient(180deg, #8B5CF6, #6C63FF);
+    border-radius: 6px 6px 0 0; min-height: 3px; transition: height .4s ease;
+  }
+  .bar-val { font-size: 10px; color: var(--text); font-weight: 700; margin-bottom: 3px; }
+  .bar-lbl { font-size: 10px; color: var(--muted); margin-top: 6px; white-space: nowrap; }
+
+  .btn-outline {
+    padding: 10px 16px; background: white; color: var(--primary);
+    border: 1.5px solid var(--primary); border-radius: 10px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn-outline:disabled { opacity: .5; cursor: not-allowed; }
+
   @media (max-width: 400px) {
     .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
     .stat-card { padding: 12px 6px; }
@@ -332,12 +387,17 @@
     </div>
   </div>
 
-  <div class="main">
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tabBtnUsers" onclick="switchTab('users')">👥 Pengguna</button>
+    <button class="tab-btn" id="tabBtnStats" onclick="switchTab('stats')">📊 Statistik & Revenue</button>
+  </div>
+
+  <div class="main" id="tabUsers">
     <!-- Stats -->
     <div class="stats-grid" id="statsGrid">
       <div class="stat-card blue"><div class="num" id="statTotal">-</div><div class="lbl">Total User</div></div>
       <div class="stat-card green"><div class="num" id="statPro">-</div><div class="lbl">Pro Aktif</div></div>
-      <div class="stat-card gold"><div class="num" id="statTrial">-</div><div class="lbl">Trial</div></div>
+      <div class="stat-card red"><div class="num" id="statExpired">-</div><div class="lbl">Pro Expired</div></div>
     </div>
 
     <!-- Toolbar -->
@@ -347,7 +407,6 @@
       <select id="filterPlan" onchange="renderUsers()">
         <option value="">Semua Plan</option>
         <option value="free">Free</option>
-        <option value="trial">Trial</option>
         <option value="pro">Pro</option>
         <option value="expired">Expired</option>
       </select>
@@ -359,6 +418,76 @@
     <!-- User list -->
     <div id="userList">
       <div class="loading"><div class="spinner"></div> Memuat data...</div>
+    </div>
+  </div>
+
+  <div class="main" id="tabStats" style="display:none">
+    <!-- Revenue -->
+    <div class="panel">
+      <h3>💰 Revenue</h3>
+      <div class="sub">Dihitung dari langganan Pro yang sedang aktif saat ini</div>
+      <div class="metric-row">
+        <div class="metric-box">
+          <div class="num" id="statMRR">-</div>
+          <div class="lbl">MRR (Bulanan)</div>
+        </div>
+        <div class="metric-box">
+          <div class="num green" id="statARR">-</div>
+          <div class="lbl">ARR (Tahunan)</div>
+        </div>
+      </div>
+      <div class="metric-row" style="margin-top:10px">
+        <div class="metric-box">
+          <div class="num gold" id="statProMonthly">-</div>
+          <div class="lbl">Pro Bulanan Aktif</div>
+        </div>
+        <div class="metric-box">
+          <div class="num gold" id="statProYearly">-</div>
+          <div class="lbl">Pro Tahunan Aktif</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Growth -->
+    <div class="panel">
+      <h3>📈 Growth — User Baru</h3>
+      <div class="sub">Jumlah pendaftar baru per bulan, 6 bulan terakhir</div>
+      <div class="bar-chart" id="growthChart"></div>
+    </div>
+
+    <!-- Conversion -->
+    <div class="panel">
+      <h3>🎯 Conversion Rate</h3>
+      <div class="sub">Persentase total user yang pernah upgrade ke Pro (pernah bayar minimal 1x)</div>
+      <div class="metric-row">
+        <div class="metric-box">
+          <div class="num" id="statConversion">-</div>
+          <div class="lbl">Free → Pro</div>
+        </div>
+        <div class="metric-box">
+          <div class="num green" id="statEverPaid">-</div>
+          <div class="lbl">User Pernah Bayar</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GMV -->
+    <div class="panel">
+      <h3>🧾 GMV (Gross Merchandise Value)</h3>
+      <div class="sub">
+        Total nilai transaksi yang diproses lewat semua toko di Kasva (bukan
+        revenue Kasva — ini omset gabungan seluruh pengguna). Dihitung manual
+        karena query-nya berat, jadi tidak auto-load.
+      </div>
+      <div class="metric-row">
+        <div class="metric-box">
+          <div class="num" id="statGMV">Belum dihitung</div>
+          <div class="lbl">Total GMV Semua Waktu</div>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn-outline" id="gmvBtn" onclick="computeGMV()">Hitung GMV Sekarang</button>
+      </div>
     </div>
   </div>
 </div>
@@ -387,10 +516,6 @@
         <label>Tanggal Expired</label>
         <input type="date" id="editExpiry" />
       </div>
-      <div class="edit-row">
-        <label>Trial Sampai (kosongkan jika bukan trial)</label>
-        <input type="date" id="editTrial" />
-      </div>
       <button class="btn-save" id="saveBtn" onclick="saveUser()">💾 Simpan Perubahan</button>
     </div>
   </div>
@@ -407,7 +532,7 @@ import {
   signOut, onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import {
-  getFirestore, collection, getDocs, doc, updateDoc, query, orderBy
+  getFirestore, collection, collectionGroup, getDocs, doc, setDoc, updateDoc, query, orderBy
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── Firebase Config (dari google-services.json Anda) ──
@@ -446,29 +571,169 @@ function fmtDateInput(val) {
 }
 
 // ── Tentukan status plan ──────────────────────────
-function getPlanStatus(u) {
-  const now = new Date();
-  const trial = u.trialUntil ? (u.trialUntil.toDate ? u.trialUntil.toDate() : new Date(u.trialUntil)) : null;
-  const expiry = u.planExpiry ? (u.planExpiry.toDate ? u.planExpiry.toDate() : new Date(u.planExpiry)) : null;
+// Sumber data: users/{uid}/subscription/data (bukan root users/{uid}
+// lagi — field 'plan'/'planExpiry' di root sudah tidak dipakai app).
+function subExpiry(sub) {
+  if (!sub || !sub.expiredAt) return null;
+  const d = new Date(sub.expiredAt);
+  return isNaN(d.getTime()) ? null : d;
+}
 
-  if (trial && trial > now) return 'trial';
-  if (u.plan === 'pro' && expiry && expiry > now) return 'pro';
-  if (u.plan === 'pro' && (!expiry || expiry <= now)) return 'expired';
-  return 'free';
+function isSubActive(sub) {
+  if (!sub) return false;
+  if (sub.status === 'expired') return false;
+  const expiry = subExpiry(sub);
+  if (!expiry) return true; // lifetime / manual, sama seperti plan_model.dart
+  return expiry > new Date();
+}
+
+function getPlanStatus(u) {
+  const sub = u._sub;
+  if (!sub || sub.plan !== 'pro') return 'free';
+  return isSubActive(sub) ? 'pro' : 'expired';
 }
 
 function planBadge(status) {
   const map = {
     free:    ['plan-free',    'FREE'],
     pro:     ['plan-pro',     'PRO'],
-    trial:   ['plan-trial',   'TRIAL'],
     expired: ['plan-expired', 'EXPIRED'],
   };
   const [cls, lbl] = map[status] || map.free;
   return `<span class="plan-badge ${cls}">${lbl}</span>`;
 }
 
-// ── Auth state ────────────────────────────────────
+// ── Tab switching ──────────────────────────────────
+let statsLoaded = false;
+window.switchTab = (tab) => {
+  const isUsers = tab === 'users';
+  document.getElementById('tabUsers').style.display = isUsers ? 'block' : 'none';
+  document.getElementById('tabStats').style.display = isUsers ? 'none' : 'block';
+  document.getElementById('tabBtnUsers').classList.toggle('active', isUsers);
+  document.getElementById('tabBtnStats').classList.toggle('active', !isUsers);
+
+  // Lazy-load stats pas pertama kali tab dibuka (bukan auto saat login),
+  // biar nggak nambah query di halaman Pengguna yang lebih sering dibuka.
+  if (!isUsers && !statsLoaded) {
+    statsLoaded = true;
+    computeRevenueStats();
+    computeGrowthStats();
+    computeConversionStats();
+  }
+};
+
+// ── Harga saat ini (sinkron dengan PLANS di api/pay.js) ────
+const PRICE_MONTHLY = 19000;
+const PRICE_YEARLY  = 199000;
+
+function fmtRupiah(n) {
+  return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+}
+
+// ── Revenue: MRR / ARR ─────────────────────────────
+// Dihitung dari langganan Pro yang AKTIF sekarang (bukan histori order),
+// jadi selalu mencerminkan kondisi terkini walau ada yang expired/churn.
+function computeRevenueStats() {
+  let proMonthly = 0, proYearly = 0;
+  allUsers.forEach(u => {
+    if (getPlanStatus(u) !== 'pro') return;
+    if (u._sub?.billing === 'yearly') proYearly++;
+    else proMonthly++;
+  });
+
+  const mrr = (proMonthly * PRICE_MONTHLY) + (proYearly * (PRICE_YEARLY / 12));
+  const arr = mrr * 12;
+
+  document.getElementById('statMRR').textContent = fmtRupiah(mrr);
+  document.getElementById('statARR').textContent = fmtRupiah(arr);
+  document.getElementById('statProMonthly').textContent = proMonthly;
+  document.getElementById('statProYearly').textContent  = proYearly;
+}
+
+// ── Growth: signup per bulan (6 bulan terakhir) ────
+// Pakai data allUsers yang sudah ada di memori — tidak perlu query baru.
+function computeGrowthStats() {
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString('id-ID', { month: 'short' }), count: 0 });
+  }
+  const monthMap = Object.fromEntries(months.map(m => [m.key, m]));
+
+  allUsers.forEach(u => {
+    if (!u.createdAt) return;
+    const d = u.createdAt?.toDate ? u.createdAt.toDate() : new Date(u.createdAt);
+    if (isNaN(d.getTime())) return;
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    if (monthMap[key]) monthMap[key].count++;
+  });
+
+  const max = Math.max(1, ...months.map(m => m.count));
+  document.getElementById('growthChart').innerHTML = months.map(m => `
+    <div class="bar-col">
+      <div class="bar-val">${m.count}</div>
+      <div class="bar-fill" style="height:${Math.max(4, (m.count / max) * 90)}px"></div>
+      <div class="bar-lbl">${m.label}</div>
+    </div>
+  `).join('');
+}
+
+// ── Conversion Rate: Free → Pro (pernah bayar minimal 1x) ──
+// Sumber: collection 'orders' dengan status 'success', dihitung unique uid
+// (bukan jumlah order — 1 user bisa perpanjang berkali-kali).
+async function computeConversionStats() {
+  try {
+    const snap = await getDocs(collection(db, 'orders'));
+    const paidUids = new Set();
+    snap.docs.forEach(d => {
+      const o = d.data();
+      if (o.status === 'success' && o.uid) paidUids.add(o.uid);
+    });
+
+    const totalUsers = allUsers.length || 1;
+    const everPaid = paidUids.size;
+    const rate = ((everPaid / totalUsers) * 100).toFixed(1);
+
+    document.getElementById('statConversion').textContent = `${rate}%`;
+    document.getElementById('statEverPaid').textContent = everPaid;
+  } catch (e) {
+    document.getElementById('statConversion').textContent = '-';
+    document.getElementById('statEverPaid').textContent = 'Error: ' + e.message;
+  }
+}
+
+// ── GMV: total nilai transaksi semua toko (manual trigger) ──
+// Pakai collectionGroup('transactions') — bisa berat kalau data sudah
+// banyak, makanya sengaja tidak auto-load. Cuma hitung transaksi yang
+// benar-benar terjadi (completed + kasbon), refund dikeluarkan karena
+// itu pembatalan penjualan.
+window.computeGMV = async () => {
+  const btn = document.getElementById('gmvBtn');
+  const out = document.getElementById('statGMV');
+  btn.disabled = true;
+  btn.textContent = 'Menghitung...';
+  out.textContent = 'Memuat...';
+
+  try {
+    const snap = await getDocs(collectionGroup(db, 'transactions'));
+    let total = 0;
+    snap.docs.forEach(d => {
+      const t = d.data();
+      if (t.status === 'refunded') return;
+      total += Number(t.total) || 0;
+    });
+    out.textContent = fmtRupiah(total);
+    btn.textContent = '↻ Hitung Ulang';
+    btn.disabled = false;
+  } catch (e) {
+    out.textContent = 'Gagal: ' + e.message;
+    btn.textContent = 'Coba Lagi';
+    btn.disabled = false;
+  }
+};
+
+
 onAuthStateChanged(auth, user => {
   if (user) {
     document.getElementById('loginScreen').style.display = 'none';
@@ -549,6 +814,19 @@ window.loadUsers = async () => {
     const q   = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
     const snap = await getDocs(q);
     allUsers   = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Data plan Pro yang sebenarnya ada di users/{uid}/subscription/data,
+    // bukan di field root users/{uid}.plan (itu sisa skema lama).
+    // Pakai collectionGroup supaya cukup 1 query buat semua user sekaligus,
+    // bukan query terpisah per-user (lebih hemat read Firestore).
+    const subSnap = await getDocs(collectionGroup(db, 'subscription'));
+    const subByUid = {};
+    subSnap.docs.forEach(d => {
+      const uid = d.ref.parent.parent?.id;
+      if (uid) subByUid[uid] = d.data();
+    });
+    allUsers.forEach(u => { u._sub = subByUid[u.id] || null; });
+
     updateStats();
     renderUsers();
   } catch (e) {
@@ -560,10 +838,10 @@ window.loadUsers = async () => {
 function updateStats() {
   const total   = allUsers.length;
   const pro     = allUsers.filter(u => getPlanStatus(u) === 'pro').length;
-  const trial   = allUsers.filter(u => getPlanStatus(u) === 'trial').length;
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statPro').textContent   = pro;
-  document.getElementById('statTrial').textContent = trial;
+  const expired = allUsers.filter(u => getPlanStatus(u) === 'expired').length;
+  document.getElementById('statTotal').textContent   = total;
+  document.getElementById('statPro').textContent     = pro;
+  document.getElementById('statExpired').textContent = expired;
 }
 
 // ── Render user list ──────────────────────────────
@@ -596,14 +874,12 @@ window.renderUsers = () => {
 
     // Expiry chip
     let expiryChip = '';
-    if (status === 'trial') {
-      const d = u.trialUntil?.toDate ? u.trialUntil.toDate() : new Date(u.trialUntil||0);
-      const days = Math.ceil((d - now) / 86400000);
-      expiryChip = `<span class="meta-chip warn">⏱ Trial ${days}h lagi</span>`;
-    } else if (status === 'pro') {
-      const d = u.planExpiry?.toDate ? u.planExpiry.toDate() : new Date(u.planExpiry||0);
-      const days = Math.ceil((d - now) / 86400000);
-      expiryChip = `<span class="meta-chip ok">✓ Pro ${days}h lagi</span>`;
+    if (status === 'pro') {
+      const d = subExpiry(u._sub);
+      const days = d ? Math.ceil((d - now) / 86400000) : null;
+      expiryChip = days != null
+        ? `<span class="meta-chip ok">✓ Pro ${days}h lagi</span>`
+        : `<span class="meta-chip ok">✓ Pro (lifetime)</span>`;
     } else if (status === 'expired') {
       expiryChip = `<span class="meta-chip warn">⚠ Pro expired</span>`;
     }
@@ -638,8 +914,8 @@ window.openUser = (uid) => {
   if (!u) return;
 
   const status   = getPlanStatus(u);
-  const expiry   = u.planExpiry;
-  const trial    = u.trialUntil;
+  const sub      = u._sub || {};
+  const expiry   = subExpiry(sub);
   const settings = u.settings || {};
 
   document.getElementById('modalBody').innerHTML = `
@@ -660,6 +936,10 @@ window.openUser = (uid) => {
       <span class="detail-value">${planBadge(status)}</span>
     </div>
     <div class="detail-row">
+      <span class="detail-label">Billing</span>
+      <span class="detail-value">${sub.billing === 'yearly' ? 'Tahunan' : sub.billing === 'monthly' ? 'Bulanan' : '-'}</span>
+    </div>
+    <div class="detail-row">
       <span class="detail-label">Tanggal Daftar</span>
       <span class="detail-value">${fmtDate(u.createdAt)}</span>
     </div>
@@ -668,16 +948,16 @@ window.openUser = (uid) => {
       <span class="detail-value">${expiry ? fmtDate(expiry) : '-'}</span>
     </div>
     <div class="detail-row">
-      <span class="detail-label">Trial Sampai</span>
-      <span class="detail-value">${trial ? fmtDate(trial) : '-'}</span>
+      <span class="detail-label">Order ID Terakhir</span>
+      <span class="detail-value" style="font-size:11px;">${sub.orderId || '-'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Terakhir Bayar</span>
+      <span class="detail-value">${sub.lastPaidAt ? fmtDate(sub.lastPaidAt) : '-'}</span>
     </div>
     <div class="detail-row">
       <span class="detail-label">Produk / Tx Bulan Ini</span>
       <span class="detail-value">${u.productCount||0} / ${u.txThisMonth||0}</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Trial Pernah Dipakai</span>
-      <span class="detail-value">${u.trialUsed ? 'Ya' : 'Belum'}</span>
     </div>
     <div class="detail-row">
       <span class="detail-label">UID</span>
@@ -686,9 +966,8 @@ window.openUser = (uid) => {
   `;
 
   // Set edit form
-  document.getElementById('editPlan').value   = u.plan === 'pro' ? 'pro' : 'free';
+  document.getElementById('editPlan').value   = sub.plan === 'pro' ? 'pro' : 'free';
   document.getElementById('editExpiry').value = fmtDateInput(expiry);
-  document.getElementById('editTrial').value  = fmtDateInput(trial);
 
   const btn = document.getElementById('saveBtn');
   btn.textContent = '💾 Simpan Perubahan';
@@ -707,10 +986,9 @@ window.closeModal = (e) => {
 // ── Save user ─────────────────────────────────────
 window.saveUser = async () => {
   if (!currentUserId) return;
-  const btn     = document.getElementById('saveBtn');
-  const plan    = document.getElementById('editPlan').value;
-  const expiry  = document.getElementById('editExpiry').value;
-  const trial   = document.getElementById('editTrial').value;
+  const btn    = document.getElementById('saveBtn');
+  const plan   = document.getElementById('editPlan').value;
+  const expiry = document.getElementById('editExpiry').value;
 
   btn.textContent = 'Menyimpan...';
   btn.disabled    = true;
@@ -718,20 +996,25 @@ window.saveUser = async () => {
   try {
     const updateData = {
       plan,
-      planExpiry: expiry ? new Date(expiry).toISOString() : null,
-      trialUntil: trial ? new Date(trial).toISOString() : null,
+      status: 'active',
+      expiredAt: expiry ? new Date(expiry).toISOString() : null,
     };
 
-    // Kalau set ke pro, trialUsed = true
-    if (plan === 'pro' && expiry) {
-      updateData.trialUsed = true;
-    }
-
-    await updateDoc(doc(db, 'users', currentUserId), updateData);
+    // Tulis ke users/{uid}/subscription/data — ini yang beneran dibaca
+    // PlanService di app (bukan field root users/{uid} yang sudah tidak
+    // dipakai). Pakai setDoc+merge karena dokumennya mungkin belum ada
+    // sama sekali untuk user yang masih Free (belum pernah subscribe).
+    await setDoc(
+      doc(db, 'users', currentUserId, 'subscription', 'data'),
+      updateData,
+      { merge: true }
+    );
 
     // Update local data
     const idx = allUsers.findIndex(u => u.id === currentUserId);
-    if (idx >= 0) Object.assign(allUsers[idx], updateData);
+    if (idx >= 0) {
+      allUsers[idx]._sub = { ...(allUsers[idx]._sub || {}), ...updateData };
+    }
 
     btn.textContent = '✓ Tersimpan!';
     btn.className   = 'btn-save success';

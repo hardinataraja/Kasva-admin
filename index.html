@@ -3,302 +3,1046 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Kasva Admin Panel - Fixed</title>
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#6C63FF">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/906/906343.png">
-
-<script>
-  // Mendaftarkan Service Worker sederhana
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').then(reg => {
-        console.log('PWA: Service Worker Terdaftar', reg.scope);
-      }).catch(err => {
-        console.log('PWA: Gagal mendaftar', err);
-      });
-    });
-  }
-</script>
+<title>Kasva Admin</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --primary:#6C63FF; --success:#059669; --warning:#D97706;
-  --error:#DC2626; --bg:#F4F6FB; --card:#FFF;
-  --text:#1A1D23; --muted:#6B7280; --border:#E5E7EB; --gold:#F59E0B; --purple:#8B5CF6;
-}
-body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary: #6C63FF;
+    --success: #059669;
+    --warning: #D97706;
+    --error:   #DC2626;
+    --bg:      #F4F6FB;
+    --card:    #FFFFFF;
+    --text:    #1A1D23;
+    --muted:   #6B7280;
+    --border:  #E5E7EB;
+    --gold:    #F59E0B;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
 
-/* Login */
-#loginScreen { display:flex; align-items:center; justify-content:center; min-height:100vh; background:linear-gradient(135deg,#6C63FF 0%,#8B5CF6 100%); padding:24px; }
-.login-box { background:white; border-radius:20px; padding:32px 28px; width:100%; max-width:380px; box-shadow:0 20px 60px rgba(108,99,255,.3); }
-.login-logo { text-align:center; margin-bottom:24px; }
-.logo-icon { width:72px; height:72px; border-radius:18px; background:linear-gradient(135deg,#6C63FF,#8B5CF6); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-size:30px; }
-.login-logo h1 { font-size:22px; color:var(--primary); font-weight:700; }
-.form-group { margin-bottom:14px; }
-.form-group label { display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
-.form-group input { width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:14px; outline:none; }
-.btn-primary { width:100%; padding:13px; background:var(--primary); color:white; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; }
+  /* ── Login ── */
+  #loginScreen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #6C63FF 0%, #8B5CF6 100%);
+    padding: 24px;
+  }
+  .login-box {
+    background: white; border-radius: 20px; padding: 32px 28px;
+    width: 100%; max-width: 380px;
+    box-shadow: 0 20px 60px rgba(108,99,255,0.3);
+  }
+  .login-logo {
+    text-align: center; margin-bottom: 24px;
+  }
+  .login-logo img {
+    width: 72px; height: 72px; border-radius: 18px;
+    object-fit: cover; margin-bottom: 12px;
+    box-shadow: 0 8px 20px rgba(108,99,255,0.25);
+  }
+  .login-logo h1 { font-size: 22px; color: var(--primary); font-weight: 700; }
+  .login-logo p  { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .form-group input {
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-size: 14px; outline: none;
+    transition: border-color .2s;
+  }
+  .form-group input:focus { border-color: var(--primary); }
+  .btn-primary {
+    width: 100%; padding: 13px; background: var(--primary);
+    color: white; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: opacity .2s;
+  }
+  .btn-primary:hover { opacity: .88; }
+  .error-msg { color: var(--error); font-size: 12px; margin-top: 8px; text-align: center; }
 
-/* App Dashboard */
-#appScreen { display:none; }
-.top-bar { background:linear-gradient(135deg,#6C63FF 0%,#8B5CF6 100%); padding:14px 16px; position:sticky; top:0; z-index:100; color:white; }
-.top-bar-inner { display:flex; align-items:center; justify-content:space-between; max-width:800px; margin:0 auto; }
-.main { padding:16px; max-width:800px; margin:0 auto; }
+  /* ── App Shell ── */
+  #appScreen { display: none; }
+  .top-bar {
+    background: linear-gradient(135deg, #6C63FF 0%, #8B5CF6 100%);
+    padding: 14px 16px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(108,99,255,0.3);
+  }
+  .top-bar-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 700px; margin: 0 auto;
+  }
+  .top-bar h1 { color: white; font-size: 18px; font-weight: 700; }
+  .top-bar-right { display: flex; align-items: center; gap: 10px; }
+  .admin-badge {
+    background: rgba(255,255,255,0.2); color: white;
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  }
+  .btn-logout {
+    background: rgba(255,255,255,0.15); color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 6px 12px; border-radius: 8px; font-size: 13px; cursor: pointer;
+  }
 
-/* Stats */
-.stats-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:20px; }
-.stat-card { background:white; border-radius:16px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.05); text-align:center; }
-.stat-card.full { grid-column: span 2; border: 2px solid var(--purple); background: #f9f8ff; }
-.stat-card .num { font-size:24px; font-weight:800; display:block; }
-.stat-card .lbl { font-size:12px; color:var(--muted); }
-.stat-card.purple .num { color: var(--purple); font-size: 32px; }
-.stat-card.blue .num { color: var(--primary); }
-.stat-card.green .num { color: var(--success); }
+  .main { padding: 16px; max-width: 700px; margin: 0 auto; }
 
-/* Tabs */
-.tabs { display:flex; background:white; padding:6px; border-radius:14px; margin-bottom:16px; gap:4px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
-.tab { flex:1; padding:10px; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; color:var(--muted); background:none; transition: 0.2s; }
-.tab.active { background:var(--primary); color:white; }
+  /* ── Stats ── */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; margin-bottom: 16px;
+  }
+  .stat-card {
+    background: white; border-radius: 14px; padding: 14px 10px;
+    text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .stat-card .num { font-size: 24px; font-weight: 700; }
+  .stat-card .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .stat-card.blue .num  { color: var(--primary); }
+  .stat-card.green .num { color: var(--success); }
+  .stat-card.gold .num  { color: var(--gold); }
+  .stat-card.red .num   { color: var(--error); }
 
-/* Lists */
-.user-card, .inv-card { background:white; border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
-.avatar { width:45px; height:45px; border-radius:12px; background:linear-gradient(135deg,#6C63FF,#8B5CF6); display:flex; align-items:center; justify-content:center; font-weight:700; color:white; }
-.badge { padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; }
-.badge-pro { background:#EDE9FE; color:#6C63FF; }
-.badge-free { background:#F3F4F6; color:#6B7280; }
+  /* ── Toolbar ── */
+  .toolbar {
+    background: white; border-radius: 14px; padding: 12px;
+    margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  }
+  .toolbar input[type=text] {
+    flex: 1; min-width: 140px; padding: 9px 12px;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 13px; outline: none;
+  }
+  .toolbar input[type=text]:focus { border-color: var(--primary); }
+  .toolbar select {
+    padding: 9px 10px; border: 1.5px solid var(--border);
+    border-radius: 8px; font-size: 13px; outline: none;
+    background: white; cursor: pointer;
+  }
+  .btn-refresh {
+    padding: 9px 14px; background: var(--primary); color: white;
+    border: none; border-radius: 8px; font-size: 13px;
+    cursor: pointer; font-weight: 600; white-space: nowrap;
+  }
 
-.toolbar { display:flex; gap:10px; margin-bottom:15px; }
-.toolbar input { flex:1; padding:10px; border-radius:10px; border:1px solid var(--border); outline:none; }
-.btn-verify { width:100%; padding:12px; background:var(--success); color:white; border:none; border-radius:10px; font-weight:700; margin-top:10px; cursor:pointer; }
+  /* ── User Cards ── */
+  .user-card {
+    background: white; border-radius: 16px; padding: 14px;
+    margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    cursor: pointer; transition: transform .15s, box-shadow .15s;
+  }
+  .user-card:active { transform: scale(.98); }
+  .user-card-header { display: flex; align-items: center; gap: 10px; }
+  .user-avatar {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(135deg, #6C63FF, #8B5CF6);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 18px; font-weight: 700; flex-shrink: 0;
+  }
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-email { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .plan-badge {
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .plan-free    { background: #F3F4F6; color: #6B7280; }
+  .plan-pro     { background: #EDE9FE; color: #6C63FF; }
+  .plan-expired { background: #FEE2E2; color: #DC2626; }
 
-/* Modal */
-.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:20px; }
-.modal-overlay.open { display:flex; }
-.modal { background:white; width:100%; max-width:500px; border-radius:20px; padding:24px; position:relative; animation: slideUp 0.3s; }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-.detail-row { display:flex; justify-content:space-between; margin-bottom:12px; font-size:14px; border-bottom:1px solid #F9F9F9; padding-bottom:8px; }
-.toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:white; padding:10px 20px; border-radius:10px; display:none; z-index:2000; }
+  .user-meta {
+    display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;
+  }
+  .meta-chip {
+    font-size: 11px; color: var(--muted);
+    background: var(--bg); padding: 3px 8px; border-radius: 6px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .meta-chip.warn { background: #FEF3C7; color: var(--warning); }
+  .meta-chip.ok   { background: #D1FAE5; color: var(--success); }
+
+  /* ── Empty / Loading ── */
+  .empty { text-align: center; padding: 48px 16px; color: var(--muted); }
+  .empty svg { width: 56px; height: 56px; margin-bottom: 12px; opacity: .4; }
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px; gap: 12px; color: var(--muted);
+  }
+  .spinner {
+    width: 24px; height: 24px; border: 3px solid var(--border);
+    border-top-color: var(--primary); border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 200;
+    align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white; border-radius: 24px 24px 0 0;
+    padding: 20px 20px 32px; width: 100%; max-width: 500px;
+    max-height: 92vh; overflow-y: auto;
+    animation: slideUp .25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } }
+  .modal-handle {
+    width: 40px; height: 4px; background: var(--border);
+    border-radius: 2px; margin: 0 auto 16px;
+  }
+  .modal-title {
+    font-size: 17px; font-weight: 700; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--bg); border: none; cursor: pointer;
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+  }
+  .detail-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-label { color: var(--muted); font-size: 13px; }
+  .detail-value { font-weight: 500; text-align: right; max-width: 60%; word-break: break-all; }
+
+  .edit-section { margin-top: 20px; }
+  .edit-section h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--primary); }
+  .edit-row { margin-bottom: 12px; }
+  .edit-row label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 5px; }
+  .edit-row select, .edit-row input {
+    width: 100%; padding: 10px 12px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 14px; outline: none; background: white;
+  }
+  .edit-row select:focus, .edit-row input:focus { border-color: var(--primary); }
+
+  .btn-save {
+    width: 100%; padding: 13px; background: var(--primary);
+    color: white; border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    margin-top: 16px; transition: opacity .2s;
+  }
+  .btn-save:hover { opacity: .88; }
+  .btn-save:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-save.success { background: var(--success); }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #1A1D23; color: white; padding: 12px 20px;
+    border-radius: 12px; font-size: 13px; font-weight: 500;
+    z-index: 999; opacity: 0; transition: opacity .3s;
+    white-space: nowrap; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  .section-title {
+    font-size: 13px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .5px;
+    margin-bottom: 8px; margin-top: 4px;
+  }
+
+  /* ── Tabs ── */
+  .tab-nav {
+    display: flex; gap: 6px; padding: 10px 16px 0;
+    max-width: 700px; margin: 0 auto;
+  }
+  .tab-btn {
+    flex: 1; padding: 10px; border: none; border-radius: 10px 10px 0 0;
+    background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.75);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+  .tab-btn.active { background: var(--bg); color: var(--primary); }
+
+  /* ── Stat Panel (Revenue/Growth/Conversion cards) ── */
+  .panel {
+    background: white; border-radius: 14px; padding: 16px;
+    margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .panel h3 {
+    font-size: 14px; font-weight: 700; margin-bottom: 4px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .panel .sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .metric-row {
+    display: flex; gap: 10px; margin-bottom: 4px;
+  }
+  .metric-box {
+    flex: 1; background: var(--bg); border-radius: 12px;
+    padding: 14px 12px; text-align: center;
+  }
+  .metric-box .num { font-size: 22px; font-weight: 700; color: var(--primary); }
+  .metric-box .num.green { color: var(--success); }
+  .metric-box .num.gold  { color: var(--gold); }
+  .metric-box .lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* Bar chart (growth) */
+  .bar-chart {
+    display: flex; align-items: flex-end; gap: 8px;
+    height: 110px; margin-top: 12px; padding: 0 2px;
+  }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+  .bar-fill {
+    width: 100%; max-width: 28px; background: linear-gradient(180deg, #8B5CF6, #6C63FF);
+    border-radius: 6px 6px 0 0; min-height: 3px; transition: height .4s ease;
+  }
+  .bar-val { font-size: 10px; color: var(--text); font-weight: 700; margin-bottom: 3px; }
+  .bar-lbl { font-size: 10px; color: var(--muted); margin-top: 6px; white-space: nowrap; }
+
+  .btn-outline {
+    padding: 10px 16px; background: white; color: var(--primary);
+    border: 1.5px solid var(--primary); border-radius: 10px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn-outline:disabled { opacity: .5; cursor: not-allowed; }
+
+  @media (max-width: 400px) {
+    .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .stat-card { padding: 12px 6px; }
+    .stat-card .num { font-size: 20px; }
+  }
 </style>
 </head>
 <body>
 
+<!-- ── LOGIN ─────────────────────────────────────── -->
 <div id="loginScreen">
   <div class="login-box">
-    <div class="login-logo"><div class="logo-icon">⚡</div><h1>Kasva Admin</h1></div>
-    <div class="form-group"><label>Email Admin</label><input type="email" id="loginEmail" placeholder="admin@email.com"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••"></div>
-    <button class="btn-primary" onclick="doLogin()">Login Ke Panel</button>
-  </div>
-</div>
-
-<div id="appScreen">
-  <div class="top-bar">
-    <div class="top-bar-inner">
-      <h2 style="font-size:18px">Panel Kontrol Kasva</h2>
-      <button onclick="auth.signOut()" style="background:none; border:1px solid white; color:white; padding:5px 10px; border-radius:8px; font-size:12px; cursor:pointer">Keluar</button>
+    <div class="login-logo">
+      <div style="width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,#6C63FF,#8B5CF6);display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <h1>Kasva Admin</h1>
+      <p>Panel Manajemen Pengguna</p>
     </div>
-  </div>
-
-  <div class="main">
-    <div class="stats-grid">
-        <div class="stat-card full purple"><span class="num" id="statRevenue">Rp 0</span><span class="lbl">Total Pendapatan (Verified)</span></div>
-        <div class="stat-card blue"><span class="num" id="statTotal">0</span><span class="lbl">Total Pengguna</span></div>
-        <div class="stat-card green"><span class="num" id="statPro">0</span><span class="lbl">Pengguna Pro</span></div>
+    <div class="form-group">
+      <label>Email Admin</label>
+      <input type="email" id="loginEmail" placeholder="admin@email.com" />
     </div>
-
-    <div class="tabs">
-      <button class="tab active" id="tabUsers" onclick="switchTab('users')">Database User</button>
-      <button class="tab" id="tabInvoices" onclick="switchTab('invoices')">
-        Invoice <span id="pendingBadge" style="background:red; color:white; padding:2px 6px; border-radius:10px; font-size:10px; display:none">0</span>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••"
+        onkeydown="if(event.key==='Enter') doLogin()" />
+    </div>
+    <button class="btn-primary" onclick="doLogin()" id="loginBtn">Masuk</button>
+    <div class="error-msg" id="loginError"></div>
+    <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+      <p style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:10px;">
+        Belum punya akun admin?
+      </p>
+      <button class="btn-primary" onclick="showRegister()"
+        style="background:white;color:var(--primary);border:1.5px solid var(--primary);">
+        Buat Akun Admin Baru
       </button>
     </div>
 
-    <div id="sectionUsers">
-        <div class="toolbar">
-            <input type="text" id="searchInput" placeholder="Cari nama, email, atau toko..." oninput="renderUsers()">
-            <button onclick="loadUsers()" style="background:none; border:none; font-size:20px; cursor:pointer">↻</button>
-        </div>
-        <div id="userList"></div>
+    <!-- Register form (hidden by default) -->
+    <div id="registerSection" style="display:none;margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+      <p style="font-size:13px;font-weight:600;margin-bottom:12px;">Buat Akun Admin</p>
+      <div class="form-group">
+        <label>Email Admin Baru</label>
+        <input type="email" id="regEmail" placeholder="admin@kasvapos.com" />
+      </div>
+      <div class="form-group">
+        <label>Password (min. 6 karakter)</label>
+        <input type="password" id="regPass" placeholder="••••••••" />
+      </div>
+      <div class="form-group">
+        <label>Konfirmasi Password</label>
+        <input type="password" id="regPassConf" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter') doRegister()" />
+      </div>
+      <button class="btn-primary" onclick="doRegister()" id="regBtn"
+        style="background:var(--success);">
+        Buat Akun
+      </button>
+      <div class="error-msg" id="regError"></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px;text-align:center;line-height:1.5;">
+        ⚠️ Setelah buat akun, update Firestore Security Rules<br>
+        dengan email ini agar bisa akses semua data user.
+      </p>
     </div>
-
-    <div id="sectionInvoices" style="display:none"><div id="invoiceList"></div></div>
   </div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
-    <div class="modal">
-        <h3 style="margin-bottom:15px">Detail Pengguna</h3>
-        <div id="modalBody"></div>
-        <div style="margin-top:20px; background:#F4F6FB; padding:15px; border-radius:12px">
-            <label style="font-size:12px; font-weight:700">GANTI STATUS MANUAL</label>
-            <select id="editPlan" style="width:100%; padding:10px; margin:8px 0; border-radius:8px; border:1px solid #ddd">
-                <option value="free">FREE</option>
-                <option value="pro">PRO (Aktif 1 Bulan)</option>
-            </select>
-            <button class="btn-primary" onclick="saveManualUpdate()">Update Sekarang</button>
-        </div>
-        <button onclick="closeModal()" style="position:absolute; top:15px; right:15px; border:none; background:none; font-size:20px; cursor:pointer">✕</button>
+<!-- ── APP ───────────────────────────────────────── -->
+<div id="appScreen">
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <h1>⚡ Kasva Admin</h1>
+      <div class="top-bar-right">
+        <span class="admin-badge" id="adminEmail">Admin</span>
+        <button class="btn-logout" onclick="doLogout()">Keluar</button>
+      </div>
     </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tabBtnUsers" onclick="switchTab('users')">👥 Pengguna</button>
+    <button class="tab-btn" id="tabBtnStats" onclick="switchTab('stats')">📊 Statistik & Revenue</button>
+  </div>
+
+  <div class="main" id="tabUsers">
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card blue"><div class="num" id="statTotal">-</div><div class="lbl">Total User</div></div>
+      <div class="stat-card green"><div class="num" id="statPro">-</div><div class="lbl">Pro Aktif</div></div>
+      <div class="stat-card red"><div class="num" id="statExpired">-</div><div class="lbl">Pro Expired</div></div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="🔍 Cari nama / email..."
+        oninput="renderUsers()" />
+      <select id="filterPlan" onchange="renderUsers()">
+        <option value="">Semua Plan</option>
+        <option value="free">Free</option>
+        <option value="pro">Pro</option>
+        <option value="expired">Expired</option>
+      </select>
+      <button class="btn-refresh" onclick="loadUsers()">↻ Refresh</button>
+    </div>
+
+    <div class="section-title" id="userCount">Memuat...</div>
+
+    <!-- User list -->
+    <div id="userList">
+      <div class="loading"><div class="spinner"></div> Memuat data...</div>
+    </div>
+  </div>
+
+  <div class="main" id="tabStats" style="display:none">
+    <!-- Revenue -->
+    <div class="panel">
+      <h3>💰 Revenue</h3>
+      <div class="sub">Dihitung dari langganan Pro yang sedang aktif saat ini</div>
+      <div class="metric-row">
+        <div class="metric-box">
+          <div class="num" id="statMRR">-</div>
+          <div class="lbl">MRR (Bulanan)</div>
+        </div>
+        <div class="metric-box">
+          <div class="num green" id="statARR">-</div>
+          <div class="lbl">ARR (Tahunan)</div>
+        </div>
+      </div>
+      <div class="metric-row" style="margin-top:10px">
+        <div class="metric-box">
+          <div class="num gold" id="statProMonthly">-</div>
+          <div class="lbl">Pro Bulanan Aktif</div>
+        </div>
+        <div class="metric-box">
+          <div class="num gold" id="statProYearly">-</div>
+          <div class="lbl">Pro Tahunan Aktif</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Growth -->
+    <div class="panel">
+      <h3>📈 Growth — User Baru</h3>
+      <div class="sub">Jumlah pendaftar baru per bulan, 6 bulan terakhir</div>
+      <div class="bar-chart" id="growthChart"></div>
+    </div>
+
+    <!-- Conversion -->
+    <div class="panel">
+      <h3>🎯 Conversion Rate</h3>
+      <div class="sub">Persentase total user yang pernah upgrade ke Pro (pernah bayar minimal 1x)</div>
+      <div class="metric-row">
+        <div class="metric-box">
+          <div class="num" id="statConversion">-</div>
+          <div class="lbl">Free → Pro</div>
+        </div>
+        <div class="metric-box">
+          <div class="num green" id="statEverPaid">-</div>
+          <div class="lbl">User Pernah Bayar</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GMV -->
+    <div class="panel">
+      <h3>🧾 GMV (Gross Merchandise Value)</h3>
+      <div class="sub">
+        Total nilai transaksi yang diproses lewat semua toko di Kasva (bukan
+        revenue Kasva — ini omset gabungan seluruh pengguna). Dihitung manual
+        karena query-nya berat, jadi tidak auto-load.
+      </div>
+      <div class="metric-row">
+        <div class="metric-box">
+          <div class="num" id="statGMV">Belum dihitung</div>
+          <div class="lbl">Total GMV Semua Waktu</div>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn-outline" id="gmvBtn" onclick="computeGMV()">Hitung GMV Sekarang</button>
+      </div>
+    </div>
+  </div>
 </div>
 
+<!-- ── MODAL DETAIL ───────────────────────────────── -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <div class="modal-handle"></div>
+    <div class="modal-title">
+      <span>Detail Pengguna</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div id="modalBody"><!-- dynamic --></div>
+
+    <div class="edit-section">
+      <h3>✏️ Ubah Status</h3>
+      <div class="edit-row">
+        <label>Plan</label>
+        <select id="editPlan">
+          <option value="free">Free</option>
+          <option value="pro">Pro</option>
+        </select>
+      </div>
+      <div class="edit-row" id="editExpiryRow">
+        <label>Tanggal Expired</label>
+        <input type="date" id="editExpiry" />
+      </div>
+      <button class="btn-save" id="saveBtn" onclick="saveUser()">💾 Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<!-- ── FIREBASE SDK ───────────────────────────────── -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import {
+  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  signOut, onAuthStateChanged
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import {
+  getFirestore, collection, collectionGroup, getDocs, doc, setDoc, updateDoc, query, orderBy
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-<script>
+// ── Firebase Config (dari google-services.json Anda) ──
 const firebaseConfig = {
-  apiKey: "AIzaSyDVCEAaOUJ2_a8uxQw2QvOtpBjVwI6IRR0",
+  apiKey:     "AIzaSyDVCEAaOUJ2_a8uxQw2QvOtpBjVwI6IRR0",
   authDomain: "kasva-d19fa.firebaseapp.com",
-  projectId: "kasva-d19fa",
+  projectId:  "kasva-d19fa",
   storageBucket: "kasva-d19fa.firebasestorage.app",
   messagingSenderId: "110994025196",
-  appId: "1:110994025196:android:6f38ac65f6852c763493c9"
+  appId:      "1:110994025196:android:6f38ac65f6852c763493c9"
 };
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
 
-let allUsers = [];
-let allInvoices = [];
-let selectedUid = null;
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
-auth.onAuthStateChanged(user => {
+let allUsers      = [];
+let currentUserId = null;
+
+// ── Format tanggal ────────────────────────────────
+function fmtDate(val) {
+  if (!val) return '-';
+  try {
+    const d = val.toDate ? val.toDate() : new Date(val);
+    if (isNaN(d.getTime())) return '-';
+    return d.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+  } catch { return '-'; }
+}
+function fmtDateInput(val) {
+  if (!val) return '';
+  try {
+    const d = val.toDate ? val.toDate() : new Date(val);
+    if (isNaN(d.getTime())) return '';
+    return d.toISOString().split('T')[0];
+  } catch { return ''; }
+}
+
+// ── Tentukan status plan ──────────────────────────
+// Sumber data: users/{uid}/subscription/data (bukan root users/{uid}
+// lagi — field 'plan'/'planExpiry' di root sudah tidak dipakai app).
+function subExpiry(sub) {
+  if (!sub || !sub.expiredAt) return null;
+  const d = new Date(sub.expiredAt);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function isSubActive(sub) {
+  if (!sub) return false;
+  if (sub.status === 'expired') return false;
+  const expiry = subExpiry(sub);
+  if (!expiry) return true; // lifetime / manual, sama seperti plan_model.dart
+  return expiry > new Date();
+}
+
+function getPlanStatus(u) {
+  const sub = u._sub;
+  if (!sub || sub.plan !== 'pro') return 'free';
+  return isSubActive(sub) ? 'pro' : 'expired';
+}
+
+function planBadge(status) {
+  const map = {
+    free:    ['plan-free',    'FREE'],
+    pro:     ['plan-pro',     'PRO'],
+    expired: ['plan-expired', 'EXPIRED'],
+  };
+  const [cls, lbl] = map[status] || map.free;
+  return `<span class="plan-badge ${cls}">${lbl}</span>`;
+}
+
+// ── Tab switching ──────────────────────────────────
+let statsLoaded = false;
+window.switchTab = (tab) => {
+  const isUsers = tab === 'users';
+  document.getElementById('tabUsers').style.display = isUsers ? 'block' : 'none';
+  document.getElementById('tabStats').style.display = isUsers ? 'none' : 'block';
+  document.getElementById('tabBtnUsers').classList.toggle('active', isUsers);
+  document.getElementById('tabBtnStats').classList.toggle('active', !isUsers);
+
+  // Lazy-load stats pas pertama kali tab dibuka (bukan auto saat login),
+  // biar nggak nambah query di halaman Pengguna yang lebih sering dibuka.
+  if (!isUsers && !statsLoaded) {
+    statsLoaded = true;
+    computeRevenueStats();
+    computeGrowthStats();
+    computeConversionStats();
+  }
+};
+
+// ── Harga saat ini (sinkron dengan PLANS di api/pay.js) ────
+const PRICE_MONTHLY = 19000;
+const PRICE_YEARLY  = 199000;
+
+function fmtRupiah(n) {
+  return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+}
+
+// ── Revenue: MRR / ARR ─────────────────────────────
+// Dihitung dari langganan Pro yang AKTIF sekarang (bukan histori order),
+// jadi selalu mencerminkan kondisi terkini walau ada yang expired/churn.
+function computeRevenueStats() {
+  let proMonthly = 0, proYearly = 0;
+  allUsers.forEach(u => {
+    if (getPlanStatus(u) !== 'pro') return;
+    if (u._sub?.billing === 'yearly') proYearly++;
+    else proMonthly++;
+  });
+
+  const mrr = (proMonthly * PRICE_MONTHLY) + (proYearly * (PRICE_YEARLY / 12));
+  const arr = mrr * 12;
+
+  document.getElementById('statMRR').textContent = fmtRupiah(mrr);
+  document.getElementById('statARR').textContent = fmtRupiah(arr);
+  document.getElementById('statProMonthly').textContent = proMonthly;
+  document.getElementById('statProYearly').textContent  = proYearly;
+}
+
+// ── Growth: signup per bulan (6 bulan terakhir) ────
+// Pakai data allUsers yang sudah ada di memori — tidak perlu query baru.
+function computeGrowthStats() {
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString('id-ID', { month: 'short' }), count: 0 });
+  }
+  const monthMap = Object.fromEntries(months.map(m => [m.key, m]));
+
+  allUsers.forEach(u => {
+    if (!u.createdAt) return;
+    const d = u.createdAt?.toDate ? u.createdAt.toDate() : new Date(u.createdAt);
+    if (isNaN(d.getTime())) return;
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    if (monthMap[key]) monthMap[key].count++;
+  });
+
+  const max = Math.max(1, ...months.map(m => m.count));
+  document.getElementById('growthChart').innerHTML = months.map(m => `
+    <div class="bar-col">
+      <div class="bar-val">${m.count}</div>
+      <div class="bar-fill" style="height:${Math.max(4, (m.count / max) * 90)}px"></div>
+      <div class="bar-lbl">${m.label}</div>
+    </div>
+  `).join('');
+}
+
+// ── Conversion Rate: Free → Pro (pernah bayar minimal 1x) ──
+// Sumber: collection 'orders' dengan status 'success', dihitung unique uid
+// (bukan jumlah order — 1 user bisa perpanjang berkali-kali).
+async function computeConversionStats() {
+  try {
+    const snap = await getDocs(collection(db, 'orders'));
+    const paidUids = new Set();
+    snap.docs.forEach(d => {
+      const o = d.data();
+      if (o.status === 'success' && o.uid) paidUids.add(o.uid);
+    });
+
+    const totalUsers = allUsers.length || 1;
+    const everPaid = paidUids.size;
+    const rate = ((everPaid / totalUsers) * 100).toFixed(1);
+
+    document.getElementById('statConversion').textContent = `${rate}%`;
+    document.getElementById('statEverPaid').textContent = everPaid;
+  } catch (e) {
+    document.getElementById('statConversion').textContent = '-';
+    document.getElementById('statEverPaid').textContent = 'Error: ' + e.message;
+  }
+}
+
+// ── GMV: total nilai transaksi semua toko (manual trigger) ──
+// Pakai collectionGroup('transactions') — bisa berat kalau data sudah
+// banyak, makanya sengaja tidak auto-load. Cuma hitung transaksi yang
+// benar-benar terjadi (completed + kasbon), refund dikeluarkan karena
+// itu pembatalan penjualan.
+window.computeGMV = async () => {
+  const btn = document.getElementById('gmvBtn');
+  const out = document.getElementById('statGMV');
+  btn.disabled = true;
+  btn.textContent = 'Menghitung...';
+  out.textContent = 'Memuat...';
+
+  try {
+    const snap = await getDocs(collectionGroup(db, 'transactions'));
+    let total = 0;
+    snap.docs.forEach(d => {
+      const t = d.data();
+      if (t.status === 'refunded') return;
+      total += Number(t.total) || 0;
+    });
+    out.textContent = fmtRupiah(total);
+    btn.textContent = '↻ Hitung Ulang';
+    btn.disabled = false;
+  } catch (e) {
+    out.textContent = 'Gagal: ' + e.message;
+    btn.textContent = 'Coba Lagi';
+    btn.disabled = false;
+  }
+};
+
+
+onAuthStateChanged(auth, user => {
   if (user) {
     document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appScreen').style.display = 'block';
-    loadUsers(); loadInvoices();
+    document.getElementById('appScreen').style.display   = 'block';
+    document.getElementById('adminEmail').textContent     = user.email || 'Admin';
+    loadUsers();
   } else {
     document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('appScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display   = 'none';
   }
 });
 
-function doLogin() {
-  const e = document.getElementById('loginEmail').value;
-  const p = document.getElementById('loginPass').value;
-  auth.signInWithEmailAndPassword(e, p).catch(err => alert("Login Gagal: " + err.message));
-}
+// ── Show register form ────────────────────────────
+window.showRegister = () => {
+  const sec = document.getElementById('registerSection');
+  sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+};
 
-function loadUsers() {
-    db.collection('users').get().then(snap => {
-        allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderUsers(); updateStats();
-    });
-}
+// ── Register admin ────────────────────────────────
+window.doRegister = async () => {
+  const email    = document.getElementById('regEmail').value.trim();
+  const pass     = document.getElementById('regPass').value;
+  const passConf = document.getElementById('regPassConf').value;
+  const errEl    = document.getElementById('regError');
+  const btn      = document.getElementById('regBtn');
 
-function loadInvoices() {
-    db.collection('invoices').get().then(snap => {
-        allInvoices = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderInvoices(); updateStats();
+  errEl.textContent = '';
+  if (!email || !pass) { errEl.textContent = 'Email dan password wajib diisi'; return; }
+  if (pass.length < 6) { errEl.textContent = 'Password minimal 6 karakter'; return; }
+  if (pass !== passConf) { errEl.textContent = 'Password tidak cocok'; return; }
+
+  btn.textContent = 'Membuat akun...';
+  btn.disabled    = true;
+
+  try {
+    await createUserWithEmailAndPassword(auth, email, pass);
+    // Setelah register langsung login otomatis via onAuthStateChanged
+    showToast('✓ Akun admin berhasil dibuat! Jangan lupa update Firestore Rules.');
+  } catch (e) {
+    let msg = 'Gagal membuat akun';
+    if (e.code === 'auth/email-already-in-use') msg = 'Email sudah terdaftar';
+    if (e.code === 'auth/invalid-email')         msg = 'Format email tidak valid';
+    if (e.code === 'auth/weak-password')         msg = 'Password terlalu lemah';
+    errEl.textContent = msg;
+    btn.textContent   = 'Buat Akun';
+    btn.disabled      = false;
+  }
+};
+
+// ── Login ─────────────────────────────────────────
+window.doLogin = async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  const btn   = document.getElementById('loginBtn');
+  errEl.textContent = '';
+  btn.textContent   = 'Memuat...';
+  btn.disabled      = true;
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (e) {
+    errEl.textContent = 'Email atau password salah';
+    btn.textContent   = 'Masuk';
+    btn.disabled      = false;
+  }
+};
+
+window.doLogout = async () => {
+  await signOut(auth);
+  allUsers = [];
+};
+
+// ── Load users ────────────────────────────────────
+window.loadUsers = async () => {
+  document.getElementById('userList').innerHTML =
+    '<div class="loading"><div class="spinner"></div> Memuat data...</div>';
+  try {
+    const q   = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    allUsers   = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Data plan Pro yang sebenarnya ada di users/{uid}/subscription/data,
+    // bukan di field root users/{uid}.plan (itu sisa skema lama).
+    // Pakai collectionGroup supaya cukup 1 query buat semua user sekaligus,
+    // bukan query terpisah per-user (lebih hemat read Firestore).
+    const subSnap = await getDocs(collectionGroup(db, 'subscription'));
+    const subByUid = {};
+    subSnap.docs.forEach(d => {
+      const uid = d.ref.parent.parent?.id;
+      if (uid) subByUid[uid] = d.data();
     });
-}
+    allUsers.forEach(u => { u._sub = subByUid[u.id] || null; });
+
+    updateStats();
+    renderUsers();
+  } catch (e) {
+    document.getElementById('userList').innerHTML =
+      `<div class="empty">Gagal memuat: ${e.message}</div>`;
+  }
+};
 
 function updateStats() {
-    document.getElementById('statTotal').textContent = allUsers.length;
-    document.getElementById('statPro').textContent = allUsers.filter(u => u.plan === 'pro').length;
-    const rev = allInvoices.filter(i => i.status === 'verified').reduce((acc, curr) => acc + (Number(curr.totalAmount)||0) + (Number(curr.uniqueCode)||0), 0);
-    document.getElementById('statRevenue').textContent = 'Rp ' + rev.toLocaleString('id-ID');
-    const pending = allInvoices.filter(i => i.status === 'pending').length;
-    const badge = document.getElementById('pendingBadge');
-    badge.textContent = pending; badge.style.display = pending > 0 ? 'inline-block' : 'none';
+  const total   = allUsers.length;
+  const pro     = allUsers.filter(u => getPlanStatus(u) === 'pro').length;
+  const expired = allUsers.filter(u => getPlanStatus(u) === 'expired').length;
+  document.getElementById('statTotal').textContent   = total;
+  document.getElementById('statPro').textContent     = pro;
+  document.getElementById('statExpired').textContent = expired;
 }
 
-function renderUsers() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    const list = document.getElementById('userList');
-    const filtered = allUsers.filter(u => {
-        const s = u.settings || {};
-        return (u.name||"").toLowerCase().includes(q) || (u.email||"").toLowerCase().includes(q) || (s.storeName||"").toLowerCase().includes(q);
-    });
+// ── Render user list ──────────────────────────────
+window.renderUsers = () => {
+  const search  = document.getElementById('searchInput').value.toLowerCase();
+  const filter  = document.getElementById('filterPlan').value;
 
-    list.innerHTML = filtered.map(u => {
-        const s = u.settings || {};
-        return `
-            <div class="user-card" onclick="openUser('${u.id}')" style="display:flex; align-items:center; gap:15px; cursor:pointer">
-                <div class="avatar">${(u.name || "U")[0].toUpperCase()}</div>
-                <div style="flex:1">
-                    <div style="font-weight:700">${u.name || 'User Kasva'}</div>
-                    <div style="font-size:12px; color:var(--muted)">${s.storeName || 'Belum Set Toko'} • ${u.email || '-'}</div>
-                </div>
-                <span class="badge badge-${u.plan || 'free'}">${u.plan || 'free'}</span>
-            </div>
-        `;
-    }).join('');
-}
+  let list = allUsers.filter(u => {
+    const matchSearch = !search ||
+      (u.name||'').toLowerCase().includes(search) ||
+      (u.email||'').toLowerCase().includes(search);
+    const status = getPlanStatus(u);
+    const matchPlan = !filter || status === filter;
+    return matchSearch && matchPlan;
+  });
 
-function renderInvoices() {
-    const list = document.getElementById('invoiceList');
-    if (allInvoices.length === 0) { list.innerHTML = '<p style="text-align:center; padding:20px; color:#999">Tidak ada tagihan</p>'; return; }
-    const sorted = [...allInvoices].sort((a,b) => (a.status === 'pending' ? -1 : 1));
-    list.innerHTML = sorted.map(inv => {
-        const user = allUsers.find(u => u.id === inv.uid);
-        const total = (Number(inv.totalAmount) || 0) + (Number(inv.uniqueCode) || 0);
-        const isPending = inv.status === 'pending';
-        return `
-            <div class="inv-card" style="border-left: 5px solid ${isPending ? 'var(--warning)' : 'var(--success)'}">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px">
-                    <span style="font-weight:700">${user ? user.name : 'User Terhapus'}</span>
-                    <span class="badge" style="background:${isPending ? '#FEF3C7' : '#D1FAE5'}; color:${isPending ? '#D97706' : '#059669'}">${inv.status}</span>
-                </div>
-                <div style="font-size:20px; font-weight:800; color:var(--primary)">Rp ${total.toLocaleString('id-ID')}</div>
-                <div style="font-size:11px; color:var(--muted)">Ref: ${inv.id.slice(-6)} • ${inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('id-ID') : '-'}</div>
-                ${isPending ? `<button class="btn-verify" onclick="verifyUpgrade('${inv.id}', '${inv.uid}')">VERIFIKASI PEMBAYARAN</button>` : ''}
-            </div>
-        `;
-    }).join('');
-}
+  document.getElementById('userCount').textContent =
+    `${list.length} pengguna${filter ? ' (difilter)' : ''}`;
 
-function openUser(uid) {
-    selectedUid = uid;
-    const u = allUsers.find(x => x.id === uid);
-    if(!u) return;
-    const s = u.settings || {};
-    // FIX: Ambil phone dan address dari dalam u.settings
-    document.getElementById('modalBody').innerHTML = `
-        <div class="detail-row"><span>Nama</span><b>${u.name || '-'}</b></div>
-        <div class="detail-row"><span>Toko</span><b>${s.storeName || '-'}</b></div>
-        <div class="detail-row"><span>WhatsApp</span><b><a href="https://wa.me/${s.phone}" target="_blank" style="color:var(--primary); text-decoration:none">${s.phone || '-'} ↗</a></b></div>
-        <div class="detail-row"><span>Alamat</span><b>${s.address || '-'}</b></div>
-        <div class="detail-row"><span>Email</span><b>${u.email || '-'}</b></div>
-        <div class="detail-row"><span>Plan Expired</span><b>${u.planExpiry ? new Date(u.planExpiry).toLocaleDateString('id-ID') : '-'}</b></div>
-    `;
-    document.getElementById('editPlan').value = u.plan || 'free';
-    document.getElementById('modalOverlay').classList.add('open');
-}
+  if (list.length === 0) {
+    document.getElementById('userList').innerHTML =
+      '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><p>Tidak ada pengguna</p></div>';
+    return;
+  }
 
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+  document.getElementById('userList').innerHTML = list.map(u => {
+    const status  = getPlanStatus(u);
+    const initial = (u.name || u.email || '?')[0].toUpperCase();
+    const now     = new Date();
 
-function verifyUpgrade(invId, uid) {
-    if(!confirm("Konfirmasi dana sudah masuk?")) return;
-    const expiry = new Date(); expiry.setMonth(expiry.getMonth() + 1);
-    db.collection('invoices').doc(invId).update({ status: 'verified' }).then(() => {
-        return db.collection('users').doc(uid).update({ plan: 'pro', planExpiry: expiry.toISOString() });
-    }).then(() => { showToast("✓ Berhasil Verifikasi"); loadUsers(); loadInvoices(); });
-}
+    // Expiry chip
+    let expiryChip = '';
+    if (status === 'pro') {
+      const d = subExpiry(u._sub);
+      const days = d ? Math.ceil((d - now) / 86400000) : null;
+      expiryChip = days != null
+        ? `<span class="meta-chip ok">✓ Pro ${days}h lagi</span>`
+        : `<span class="meta-chip ok">✓ Pro (lifetime)</span>`;
+    } else if (status === 'expired') {
+      expiryChip = `<span class="meta-chip warn">⚠ Pro expired</span>`;
+    }
 
-function saveManualUpdate() {
-    const p = document.getElementById('editPlan').value;
-    const up = { plan: p };
-    if(p === 'pro') { const ex = new Date(); ex.setMonth(ex.getMonth() + 1); up.planExpiry = ex.toISOString(); }
-    db.collection('users').doc(selectedUid).update(up).then(() => { showToast("✓ Data Diupdate"); closeModal(); loadUsers(); });
-}
+    const joinDate = fmtDate(u.createdAt);
+    const storeName = u.settings?.storeName || '';
 
-function switchTab(t) {
-    document.getElementById('sectionUsers').style.display = t === 'users' ? 'block' : 'none';
-    document.getElementById('sectionInvoices').style.display = t === 'invoices' ? 'block' : 'none';
-    document.getElementById('tabUsers').className = 'tab' + (t === 'users' ? ' active' : '');
-    document.getElementById('tabInvoices').className = 'tab' + (t === 'invoices' ? ' active' : '');
-}
+    return `<div class="user-card" onclick="openUser('${u.id}')">
+      <div class="user-card-header">
+        <div class="user-avatar">${initial}</div>
+        <div class="user-info">
+          <div class="user-name">${u.name || '(no name)'}</div>
+          <div class="user-email">${u.email || u.id}</div>
+        </div>
+        ${planBadge(status)}
+      </div>
+      <div class="user-meta">
+        <span class="meta-chip">📅 ${joinDate}</span>
+        ${storeName ? `<span class="meta-chip">🏪 ${storeName}</span>` : ''}
+        ${expiryChip}
+        <span class="meta-chip">📦 ${u.productCount||0} produk</span>
+        <span class="meta-chip">🧾 ${u.txThisMonth||0} tx</span>
+      </div>
+    </div>`;
+  }).join('');
+};
 
-function showToast(msg) {
-    const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 3000);
-}
+// ── Open user detail ──────────────────────────────
+window.openUser = (uid) => {
+  currentUserId = uid;
+  const u = allUsers.find(x => x.id === uid);
+  if (!u) return;
+
+  const status   = getPlanStatus(u);
+  const sub      = u._sub || {};
+  const expiry   = subExpiry(sub);
+  const settings = u.settings || {};
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-row">
+      <span class="detail-label">Nama</span>
+      <span class="detail-value">${u.name || '-'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Email</span>
+      <span class="detail-value">${u.email || '-'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Nama Toko</span>
+      <span class="detail-value">${settings.storeName || '-'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Plan Saat Ini</span>
+      <span class="detail-value">${planBadge(status)}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Billing</span>
+      <span class="detail-value">${sub.billing === 'yearly' ? 'Tahunan' : sub.billing === 'monthly' ? 'Bulanan' : '-'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Tanggal Daftar</span>
+      <span class="detail-value">${fmtDate(u.createdAt)}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Pro Expired</span>
+      <span class="detail-value">${expiry ? fmtDate(expiry) : '-'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Order ID Terakhir</span>
+      <span class="detail-value" style="font-size:11px;">${sub.orderId || '-'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Terakhir Bayar</span>
+      <span class="detail-value">${sub.lastPaidAt ? fmtDate(sub.lastPaidAt) : '-'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Produk / Tx Bulan Ini</span>
+      <span class="detail-value">${u.productCount||0} / ${u.txThisMonth||0}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">UID</span>
+      <span class="detail-value" style="font-size:11px;color:#999">${u.id}</span>
+    </div>
+  `;
+
+  // Set edit form
+  document.getElementById('editPlan').value   = sub.plan === 'pro' ? 'pro' : 'free';
+  document.getElementById('editExpiry').value = fmtDateInput(expiry);
+
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = '💾 Simpan Perubahan';
+  btn.className   = 'btn-save';
+  btn.disabled    = false;
+
+  document.getElementById('modalOverlay').classList.add('open');
+};
+
+window.closeModal = (e) => {
+  if (e && e.target !== document.getElementById('modalOverlay')) return;
+  document.getElementById('modalOverlay').classList.remove('open');
+  currentUserId = null;
+};
+
+// ── Save user ─────────────────────────────────────
+window.saveUser = async () => {
+  if (!currentUserId) return;
+  const btn    = document.getElementById('saveBtn');
+  const plan   = document.getElementById('editPlan').value;
+  const expiry = document.getElementById('editExpiry').value;
+
+  btn.textContent = 'Menyimpan...';
+  btn.disabled    = true;
+
+  try {
+    const updateData = {
+      plan,
+      status: 'active',
+      expiredAt: expiry ? new Date(expiry).toISOString() : null,
+    };
+
+    // Tulis ke users/{uid}/subscription/data — ini yang beneran dibaca
+    // PlanService di app (bukan field root users/{uid} yang sudah tidak
+    // dipakai). Pakai setDoc+merge karena dokumennya mungkin belum ada
+    // sama sekali untuk user yang masih Free (belum pernah subscribe).
+    await setDoc(
+      doc(db, 'users', currentUserId, 'subscription', 'data'),
+      updateData,
+      { merge: true }
+    );
+
+    // Update local data
+    const idx = allUsers.findIndex(u => u.id === currentUserId);
+    if (idx >= 0) {
+      allUsers[idx]._sub = { ...(allUsers[idx]._sub || {}), ...updateData };
+    }
+
+    btn.textContent = '✓ Tersimpan!';
+    btn.className   = 'btn-save success';
+    btn.disabled    = false;
+
+    updateStats();
+    renderUsers();
+    showToast('✓ Data pengguna berhasil diupdate');
+
+    setTimeout(() => {
+      btn.textContent = '💾 Simpan Perubahan';
+      btn.className   = 'btn-save';
+    }, 2500);
+  } catch (e) {
+    btn.textContent = '✕ Gagal simpan';
+    btn.disabled    = false;
+    showToast('Error: ' + e.message);
+  }
+};
+
+// ── Toast ─────────────────────────────────────────
+window.showToast = (msg) => {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+};
+
 </script>
 </body>
 </html>
